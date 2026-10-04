@@ -5,7 +5,7 @@ import { placeholder } from "@/lib/images";
 
 export const metadata: Metadata = {
   title: "About",
-  description: "The story behind The Art House — handmade art from our studio to your walls.",
+  description: "The story behind Verona Arts — handmade art from our studio to your walls.",
 };
 
 const STATS = [
@@ -30,7 +30,7 @@ export default function AboutPage() {
           <h1 className="heading mt-3 sm:text-5xl">Art that makes a house a home</h1>
           <div className="prose-page mt-6">
             <p>
-              The Art House began with a sketchbook and a simple belief: that every home deserves art made with real
+              Verona Arts began with a sketchbook and a simple belief: that every home deserves art made with real
               hands and real heart. What started as pencil portraits for friends and family grew into a studio creating
               spiritual art, portraits, animals and landscapes for homes across India.
             </p>

@@ -1,13 +1,14 @@
 @import "tailwindcss";
 
 @theme {
-  --color-paper: #faf8f5;
-  --color-card: #ffffff;
-  --color-ink: #1f1f1f;
-  --color-muted: #6b6660;
-  --color-line: #e8e4de;
-  --color-gold: #b08d57;
-  --color-gold-dark: #8f6f3f;
+  /* Verona Arts brand palette */
+  --color-paper: #ffffff; /* White — main background, navbar, clean sections */
+  --color-ink: #1f3d2b; /* Forest Green — headings, logo text, navigation, footer */
+  --color-gold: #c27c38; /* Warm Gold — buttons, highlights, icons, hover accents */
+  --color-gold-dark: #a2642a;
+  --color-card: #f9f2e6; /* Soft Cream — alternate sections, cards, subtle backgrounds */
+  --color-muted: #5c6a61;
+  --color-line: #ebe2d2;
   --color-sale: #a4462f;
 
   --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
@@ -31,16 +32,16 @@ body {
   @apply inline-flex items-center justify-center gap-2 px-6 py-3 text-sm font-medium tracking-wide uppercase transition-colors disabled:cursor-not-allowed disabled:opacity-50;
 }
 @utility btn-primary {
-  @apply btn bg-ink text-paper hover:bg-gold-dark;
+  @apply btn bg-gold text-white hover:bg-gold-dark;
 }
 @utility btn-outline {
-  @apply btn border border-ink text-ink hover:bg-ink hover:text-paper;
+  @apply btn border border-ink text-ink hover:border-gold hover:bg-gold hover:text-white;
 }
 @utility btn-gold {
   @apply btn bg-gold text-white hover:bg-gold-dark;
 }
 @utility input {
-  @apply w-full border border-line bg-card px-3 py-2.5 text-sm outline-none placeholder:text-muted/70 focus:border-ink;
+  @apply w-full border border-line bg-paper px-3 py-2.5 text-sm outline-none placeholder:text-muted/70 focus:border-gold;
 }
 @utility label {
   @apply mb-1.5 block text-xs font-medium tracking-wide text-muted uppercase;
@@ -49,7 +50,7 @@ body {
   @apply text-xs font-medium tracking-[0.2em] text-gold uppercase;
 }
 @utility heading {
-  @apply font-serif text-3xl leading-tight sm:text-4xl;
+  @apply font-serif text-3xl leading-tight text-ink sm:text-4xl;
 }
 
 .prose-page p {

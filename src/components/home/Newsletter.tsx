@@ -9,7 +9,7 @@ export default function Newsletter() {
   return (
     <section className="bg-ink py-16 text-paper">
       <div className="container-page max-w-2xl text-center">
-        <p className="text-xs tracking-[0.25em] text-gold uppercase">Join the Art House circle</p>
+        <p className="text-xs tracking-[0.25em] text-gold uppercase">Join the Verona Arts circle</p>
         <h2 className="mt-3 font-serif text-3xl">Get 10% off your first order</h2>
         <p className="mt-3 text-sm text-paper/70">New collections, festive offers and studio stories — straight to your inbox.</p>
         <form

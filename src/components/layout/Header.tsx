@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Heart, Menu, Search, ShoppingBag } from "lucide-react";
@@ -26,8 +27,8 @@ export default function Header() {
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
 
   return (
-    <header className="sticky top-0 z-40 border-b border-line bg-paper/95 backdrop-blur">
-      <div className="container-page flex h-16 items-center justify-between gap-4 lg:h-20">
+    <header className="sticky top-0 z-40 border-b border-line bg-paper/95 text-ink backdrop-blur">
+      <div className="container-page flex h-20 items-center justify-between gap-4 lg:h-24">
         <div className="flex items-center gap-3">
           <button
             type="button"
@@ -37,8 +38,16 @@ export default function Header() {
           >
             <Menu className="h-5 w-5" />
           </button>
-          <Link href="/" className="font-serif text-xl tracking-wide sm:text-2xl">
-            The Art House
+          <Link href="/" className="flex shrink-0 items-center" aria-label="Verona Arts — home">
+            <Image
+              src="/images/logo.png"
+              alt="Verona Arts"
+              width={1241}
+              height={581}
+              preload
+              sizes="(min-width: 1024px) 164px, 128px"
+              className="h-[60px] w-auto lg:h-[76px]"
+            />
           </Link>
         </div>
 
@@ -67,14 +76,14 @@ export default function Header() {
         </nav>
 
         <div className="flex items-center gap-4 sm:gap-5">
-          <button type="button" aria-label="Search" onClick={ui.openSearch} className="hover:text-gold">
+          <button type="button" aria-label="Search" onClick={ui.openSearch} className="transition-colors hover:text-gold">
             <Search className="h-5 w-5" />
           </button>
-          <Link href="/wishlist" aria-label="Wishlist" className="relative hover:text-gold">
+          <Link href="/wishlist" aria-label="Wishlist" className="relative transition-colors hover:text-gold">
             <Heart className="h-5 w-5" />
             <CountBadge n={wishCount} />
           </Link>
-          <button type="button" aria-label="Open cart" onClick={ui.openCart} className="relative hover:text-gold">
+          <button type="button" aria-label="Open cart" onClick={ui.openCart} className="relative transition-colors hover:text-gold">
             <ShoppingBag className="h-5 w-5" />
             <CountBadge n={cartCount} />
           </button>

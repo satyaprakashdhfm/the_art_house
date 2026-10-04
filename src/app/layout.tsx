@@ -14,8 +14,8 @@ const playfair = Playfair_Display({ variable: "--font-playfair", subsets: ["lati
 
 export const metadata: Metadata = {
   title: {
-    default: "The Art House — Handmade Paintings & Custom Art",
-    template: "%s | The Art House",
+    default: "Verona Arts — Handmade Paintings & Custom Art",
+    template: "%s | Verona Arts",
   },
   description:
     "Buy original paintings, pencil sketches, oil, acrylic and digital art online. Spiritual art, portraits, animals, nature and custom portraits from photos.",

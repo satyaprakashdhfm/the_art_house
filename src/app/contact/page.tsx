@@ -5,12 +5,12 @@ import ContactForm from "@/components/ui/ContactForm";
 
 export const metadata: Metadata = {
   title: "Contact",
-  description: "Get in touch with The Art House for orders, custom art and questions.",
+  description: "Get in touch with Verona Arts for orders, custom art and questions.",
 };
 
 const DETAILS = [
   { icon: MessageCircle, title: "WhatsApp", text: "+91 90000 00000" },
-  { icon: Mail, title: "Email", text: "hello@thearthouse.example" },
+  { icon: Mail, title: "Email", text: "hello@veronaarts.example" },
   { icon: MapPin, title: "Studio", text: "Studio address, India" },
   { icon: Clock, title: "Hours", text: "Mon – Sat, 10am – 7pm IST" },
 ];

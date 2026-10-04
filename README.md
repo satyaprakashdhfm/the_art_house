@@ -1,4 +1,4 @@
-# The Art House
+# Verona Arts
 
 Online art store for paintings — pencil sketches, oil, acrylic and digital art. This is **Phase 1**: a frontend-only mock built with Next.js, using sample data. See [PLAN.md](PLAN.md) for the full plan.
 

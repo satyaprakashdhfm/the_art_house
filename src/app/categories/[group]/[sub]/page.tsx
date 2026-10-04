@@ -57,7 +57,7 @@ export default async function SubCategoryPage({ params }: PageProps<"/categories
       <section className="container-page mt-8 max-w-3xl">
         <h2 className="font-serif text-xl">About our {s.name} collection</h2>
         <p className="mt-3 text-sm leading-relaxed text-muted">
-          Every {s.name.toLowerCase()} artwork at The Art House is created by hand (or digitally painted) by our artist,
+          Every {s.name.toLowerCase()} artwork at Verona Arts is created by hand (or digitally painted) by our artist,
           signed and shipped with a Certificate of Authenticity. Choose a ready original, or order any design in the size
           that fits your wall. Want something personal? Try our{" "}
           <Link href="/custom-art" className="underline">

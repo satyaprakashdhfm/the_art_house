@@ -6,7 +6,7 @@ import { COUPONS, STANDING_OFFERS } from "@/data/offers";
 
 export const metadata: Metadata = {
   title: "Offers",
-  description: "Current coupons, festive sales and free-shipping offers at The Art House.",
+  description: "Current coupons, festive sales and free-shipping offers at Verona Arts.",
 };
 
 export default function OffersPage() {

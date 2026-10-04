@@ -50,7 +50,7 @@ export default function Hero() {
             <p className="text-xs tracking-[0.25em] uppercase">{s.eyebrow}</p>
             <h1 className="mt-4 max-w-2xl font-serif text-4xl leading-tight sm:text-6xl">{s.title}</h1>
             <p className="mt-4 max-w-lg text-paper/85">{s.text}</p>
-            <Link href={s.cta.href} className="btn mt-8 w-fit bg-paper text-ink hover:bg-gold hover:text-white" tabIndex={idx === i ? 0 : -1}>
+            <Link href={s.cta.href} className="btn-gold mt-8 w-fit" tabIndex={idx === i ? 0 : -1}>
               {s.cta.label}
             </Link>
           </div>
