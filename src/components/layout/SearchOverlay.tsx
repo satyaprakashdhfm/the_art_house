@@ -5,8 +5,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Search, X } from "lucide-react";
 import { ui, useUI } from "@/context/ui";
-import { PRODUCTS } from "@/data/products";
-import { CATEGORY_GROUPS, MEDIUM_LABELS, subName } from "@/data/categories";
+import { useCatalog } from "@/context/catalog";
+import { MEDIUM_LABELS } from "@/lib/labels";
 import { subHref } from "@/components/layout/nav";
 import { startingPrice } from "@/lib/price";
 import { formatINR } from "@/lib/format";
@@ -15,6 +15,7 @@ const TRENDING = ["Radha Krishna", "Buddha", "Pencil portrait", "Horses", "Coupl
 
 export default function SearchOverlay() {
   const { searchOpen } = useUI();
+  const catalog = useCatalog();
   const [query, setQuery] = useState("");
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -30,17 +31,19 @@ export default function SearchOverlay() {
 
   const products = useMemo(() => {
     if (!q) return [];
-    return PRODUCTS.filter((p) =>
-      [p.title, subName(p.subCategory), MEDIUM_LABELS[p.medium], p.style].join(" ").toLowerCase().includes(q),
-    ).slice(0, 8);
-  }, [q]);
+    return catalog.products
+      .filter((p) =>
+        [p.title, catalog.subName(p.subCategory), MEDIUM_LABELS[p.medium], p.style].join(" ").toLowerCase().includes(q),
+      )
+      .slice(0, 8);
+  }, [q, catalog]);
 
   const categories = useMemo(() => {
     if (!q) return [];
-    return CATEGORY_GROUPS.flatMap((g) =>
-      g.subs.filter((s) => s.name.toLowerCase().includes(q)).map((s) => ({ ...s, group: g.slug })),
-    ).slice(0, 6);
-  }, [q]);
+    return catalog.groups
+      .flatMap((g) => g.subs.filter((s) => s.name.toLowerCase().includes(q)).map((s) => ({ ...s, group: g.slug })))
+      .slice(0, 6);
+  }, [q, catalog]);
 
   if (!searchOpen) return null;
 

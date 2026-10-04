@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Star } from "lucide-react";
 import type { Product } from "@/types";
 import WishlistButton from "@/components/product/WishlistButton";
-import { MEDIUM_LABELS } from "@/data/categories";
+import { MEDIUM_LABELS } from "@/lib/labels";
 import { startingPrice } from "@/lib/price";
 import { formatINR } from "@/lib/format";
 

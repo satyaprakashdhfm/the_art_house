@@ -6,6 +6,7 @@ import { usePathname } from "next/navigation";
 import { Heart, Menu, Search, ShoppingBag } from "lucide-react";
 import { NAV_LINKS } from "@/components/layout/nav";
 import MegaMenu from "@/components/layout/MegaMenu";
+import UserMenu from "@/components/auth/UserMenu";
 import { ui } from "@/context/ui";
 import { useCartCount } from "@/context/cart";
 import { useWishlist } from "@/context/wishlist";
@@ -87,6 +88,7 @@ export default function Header() {
             <ShoppingBag className="h-5 w-5" />
             <CountBadge n={cartCount} />
           </button>
+          <UserMenu />
         </div>
       </div>
     </header>

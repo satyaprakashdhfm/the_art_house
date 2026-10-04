@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { Mail, MapPin, MessageCircle } from "lucide-react";
-import { CATEGORY_GROUPS } from "@/data/categories";
+import { getCatalog } from "@/lib/site-data";
+import { SUBJECT_GROUPS } from "@/lib/labels";
 
 const HELP = [
   { href: "/contact", label: "Contact Us" },
@@ -15,7 +16,9 @@ const POLICIES = [
   { href: "/policies/refund", label: "Refund Policy" },
 ];
 
-export default function Footer() {
+export default async function Footer() {
+  const { groups } = await getCatalog();
+
   return (
     <footer className="mt-24 bg-ink text-card">
       <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-5">
@@ -48,7 +51,7 @@ export default function Footer() {
                 All Paintings
               </Link>
             </li>
-            {CATEGORY_GROUPS.slice(0, 4).map((g) => (
+            {groups.filter((g) => (SUBJECT_GROUPS as readonly string[]).includes(g.slug)).map((g) => (
               <li key={g.slug}>
                 <Link href={`/categories#${g.slug}`} className="text-card/75 transition-colors hover:text-gold">
                   {g.name}

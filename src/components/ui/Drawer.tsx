@@ -10,9 +10,11 @@ type Props = {
   title: string;
   children: React.ReactNode;
   footer?: React.ReactNode;
+  /** Wider panel for forms. */
+  wide?: boolean;
 };
 
-export default function Drawer({ open, onClose, side = "right", title, children, footer }: Props) {
+export default function Drawer({ open, onClose, side = "right", title, children, footer, wide = false }: Props) {
   useEffect(() => {
     if (!open) return;
     const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
@@ -27,14 +29,14 @@ export default function Drawer({ open, onClose, side = "right", title, children,
   return (
     <div className={`fixed inset-0 z-50 ${open ? "" : "pointer-events-none"}`} aria-hidden={!open}>
       <div
-        className={`absolute inset-0 bg-ink/40 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
+        className={`absolute inset-0 bg-black/40 transition-opacity ${open ? "opacity-100" : "opacity-0"}`}
         onClick={onClose}
       />
       <aside
         role="dialog"
         aria-modal="true"
         aria-label={title}
-        className={`absolute top-0 flex h-full w-full max-w-md flex-col bg-paper shadow-xl transition-transform duration-300 ${
+        className={`absolute top-0 flex h-full w-full ${wide ? "max-w-2xl" : "max-w-md"} flex-col bg-paper shadow-xl transition-transform duration-300 ${
           side === "right" ? "right-0" : "left-0"
         } ${open ? "translate-x-0" : side === "right" ? "translate-x-full" : "-translate-x-full"}`}
       >

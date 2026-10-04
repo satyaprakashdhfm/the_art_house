@@ -1,5 +1,5 @@
 import type { Product } from "@/types";
-import { MEDIUM_LABELS, ROOM_LABELS, STYLE_LABELS, TYPE_LABELS, subName } from "@/data/categories";
+import { MEDIUM_LABELS, ORIENTATION_LABELS, ROOM_LABELS, STYLE_LABELS, TYPE_LABELS } from "@/lib/labels";
 import { startingPrice } from "@/lib/price";
 
 export const PRICE_BUCKETS = [
@@ -20,8 +20,6 @@ export const SIZE_FILTERS = [
   { key: "36x48", label: '36 × 48"' },
 ];
 
-export const ORIENTATION_LABELS = { portrait: "Portrait", landscape: "Landscape", square: "Square" } as const;
-
 export const SORTS = [
   { key: "featured", label: "Featured" },
   { key: "newest", label: "Newest" },
@@ -34,7 +32,7 @@ export type Filters = Partial<Record<FilterKey, string>> & { sort?: string };
 
 export const FILTER_KEYS: FilterKey[] = ["group", "sub", "medium", "style", "size", "price", "orientation", "type", "room", "q"];
 
-export function applyFilters(products: Product[], f: Filters) {
+export function applyFilters(products: Product[], f: Filters, subName: (slug: string) => string) {
   const bucket = PRICE_BUCKETS.find((b) => b.key === f.price);
   const q = f.q?.trim().toLowerCase();
   const result = products.filter((p) => {
@@ -70,7 +68,7 @@ export function applyFilters(products: Product[], f: Filters) {
 }
 
 /** Human label for an active filter chip. */
-export function filterLabel(key: FilterKey, value: string) {
+export function filterLabel(key: FilterKey, value: string, subName: (slug: string) => string) {
   switch (key) {
     case "sub":
       return subName(value);

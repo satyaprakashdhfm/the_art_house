@@ -2,24 +2,20 @@
 
 import { useEffect, useState } from "react";
 
-const MESSAGES = [
-  "Free shipping on orders above ₹1,999",
-  "Use code WELCOME10 for 10% off your first order",
-  "Extra 5% off on prepaid orders",
-  "Custom portraits — free digital preview before we paint",
-];
-
-export default function AnnouncementBar() {
+export default function AnnouncementBar({ messages }: { messages: string[] }) {
   const [i, setI] = useState(0);
 
   useEffect(() => {
-    const t = setInterval(() => setI((n) => (n + 1) % MESSAGES.length), 4000);
+    if (messages.length < 2) return;
+    const t = setInterval(() => setI((n) => (n + 1) % messages.length), 4000);
     return () => clearInterval(t);
-  }, []);
+  }, [messages.length]);
+
+  if (messages.length === 0) return null;
 
   return (
     <div className="bg-ink py-2 text-center text-xs tracking-wide text-paper" aria-live="polite">
-      {MESSAGES[i]}
+      {messages[i % messages.length]}
     </div>
   );
 }

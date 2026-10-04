@@ -29,7 +29,7 @@ export default function ProductPurchase({ product }: { product: Product }) {
   const toggle = (k: keyof Addons) => setAddons((a) => ({ ...a, [k]: !a[k] }));
 
   function add(buyNow: boolean) {
-    cartActions.add(product.id, size, addons, qty);
+    cartActions.add(product, size, addons, qty);
     if (buyNow) router.push("/checkout");
     else {
       ui.toast(`Added “${product.title}” to cart`);

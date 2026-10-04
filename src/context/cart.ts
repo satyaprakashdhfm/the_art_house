@@ -1,9 +1,8 @@
 "use client";
 
-import type { Addons, CartLine } from "@/types";
+import type { Addons, CartLine, Product } from "@/types";
 import { createStore, useStore } from "@/lib/store";
 import { isDigitalFile } from "@/lib/price";
-import { getProductById } from "@/data/products";
 
 type CartState = { lines: CartLine[]; coupon: string | null };
 
@@ -13,20 +12,21 @@ function lineKey(productId: string, size: string, addons: Addons) {
   return [productId, size, addons.frame ? "f" : "", addons.giftWrap ? "g" : "", addons.express ? "e" : ""].join("|");
 }
 
-function maxQty(productId: string) {
+function maxQty(product: Product) {
   // One-of-a-kind originals can only be bought once.
-  return getProductById(productId)?.type === "original" ? 1 : 10;
+  return product.type === "original" ? 1 : 10;
 }
 
 export const cartActions = {
-  add(productId: string, size: string, addons: Addons, qty = 1) {
+  add(product: Product, size: string, addons: Addons, qty = 1) {
     const clean = isDigitalFile(size) ? { frame: false, giftWrap: false, express: false } : addons;
-    const key = lineKey(productId, size, clean);
+    const key = lineKey(product.id, size, clean);
+    const max = maxQty(product);
     cartStore.set((s) => {
       const existing = s.lines.find((l) => l.key === key);
       const lines = existing
-        ? s.lines.map((l) => (l.key === key ? { ...l, qty: Math.min(maxQty(productId), l.qty + qty) } : l))
-        : [...s.lines, { key, productId, size, addons: clean, qty: Math.min(maxQty(productId), qty) }];
+        ? s.lines.map((l) => (l.key === key ? { ...l, max, qty: Math.min(max, l.qty + qty) } : l))
+        : [...s.lines, { key, productId: product.id, size, addons: clean, qty: Math.min(max, qty), max }];
       return { ...s, lines };
     });
   },
@@ -34,7 +34,7 @@ export const cartActions = {
     cartStore.set((s) => ({
       ...s,
       lines: s.lines
-        .map((l) => (l.key === key ? { ...l, qty: Math.min(maxQty(l.productId), qty) } : l))
+        .map((l) => (l.key === key ? { ...l, qty: Math.min(l.max ?? 10, qty) } : l))
         .filter((l) => l.qty > 0),
     }));
   },

@@ -1,5 +1,6 @@
-import type { CartLine, PaymentMethod, Product } from "@/types";
-import { getProductById } from "@/data/products";
+import type { CartLine, Coupon, PaymentMethod, Product } from "@/types";
+import type { Catalog } from "@/lib/catalog";
+import { couponIsScoped } from "@/lib/catalog";
 import {
   COD_FEE,
   FREE_SHIPPING_THRESHOLD,
@@ -15,9 +16,9 @@ export type PricedLine = CartLine & {
   lineTotal: number;
 };
 
-export function priceLines(lines: CartLine[]): PricedLine[] {
+export function priceLines(lines: CartLine[], catalog: Catalog): PricedLine[] {
   return lines.flatMap((line) => {
-    const product = getProductById(line.productId);
+    const product = catalog.getProductById(line.productId);
     if (!product) return [];
     const unitPrice = productPrice(product, line.size);
     const addons = addonsPrice(line.size, line.addons);
@@ -25,34 +26,26 @@ export function priceLines(lines: CartLine[]): PricedLine[] {
   });
 }
 
-const PORTRAIT_SUBS = ["portraits", "pencil-portraits", "couple-art"];
-
 /** Returns the coupon discount, or an error message explaining why it doesn't apply. */
-export function couponDiscount(code: string, lines: PricedLine[]): { amount: number; error?: string } {
-  const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
+export function couponDiscount(coupon: Coupon | undefined, lines: PricedLine[]): { amount: number; error?: string } {
+  if (!coupon) return { amount: 0, error: "This coupon code is not valid." };
   const items = lines.reduce((s, l) => s + l.qty, 0);
-  switch (code) {
-    case "WELCOME10":
-      return { amount: Math.min(500, subtotal * 0.1) };
-    case "BUY2":
-      return items >= 2 ? { amount: subtotal * 0.1 } : { amount: 0, error: "Add 2 or more items to use BUY2." };
-    case "BUY3":
-      return items >= 3 ? { amount: subtotal * 0.15 } : { amount: 0, error: "Add 3 or more items to use BUY3." };
-    case "FESTIVE25": {
-      const eligible = lines.filter((l) => l.product.group === "spiritual").reduce((s, l) => s + l.lineTotal, 0);
-      return eligible > 0 ? { amount: eligible * 0.25 } : { amount: 0, error: "FESTIVE25 applies to Spiritual art only." };
-    }
-    case "LOVE15": {
-      const eligible = lines
-        .filter((l) => PORTRAIT_SUBS.includes(l.product.subCategory))
-        .reduce((s, l) => s + l.lineTotal, 0);
-      return eligible > 0
-        ? { amount: eligible * 0.15 }
-        : { amount: 0, error: "LOVE15 applies to Portraits & Couple Art only." };
-    }
-    default:
-      return { amount: 0, error: "This coupon code is not valid." };
+  if (items < coupon.minItems) {
+    return { amount: 0, error: `Add ${coupon.minItems} or more items to use ${coupon.code}.` };
   }
+  const eligible = lines
+    .filter(
+      (l) =>
+        !couponIsScoped(coupon) ||
+        coupon.groups.includes(l.product.group) ||
+        coupon.subs.includes(l.product.subCategory),
+    )
+    .reduce((s, l) => s + l.lineTotal, 0);
+  if (eligible === 0) {
+    return { amount: 0, error: `${coupon.code} doesn't apply to the items in your cart. ${coupon.terms}`.trim() };
+  }
+  const amount = (eligible * coupon.percent) / 100;
+  return { amount: coupon.maxDiscount ? Math.min(coupon.maxDiscount, amount) : amount };
 }
 
 export type Totals = {
@@ -67,10 +60,15 @@ export type Totals = {
   amountToFreeShipping: number;
 };
 
-export function computeTotals(lines: PricedLine[], coupon: string | null, payment: PaymentMethod | null): Totals {
+export function computeTotals(
+  lines: PricedLine[],
+  coupon: string | null,
+  payment: PaymentMethod | null,
+  catalog: Catalog,
+): Totals {
   const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
   const itemCount = lines.reduce((s, l) => s + l.qty, 0);
-  const c = coupon ? couponDiscount(coupon, lines) : { amount: 0 };
+  const c = coupon ? couponDiscount(catalog.findCoupon(coupon), lines) : { amount: 0 };
   const afterCoupon = subtotal - c.amount;
   const prepaidDiscount = payment === "online" ? afterCoupon * PREPAID_DISCOUNT_RATE : 0;
   const physical = lines.some((l) => !isDigitalFile(l.size));

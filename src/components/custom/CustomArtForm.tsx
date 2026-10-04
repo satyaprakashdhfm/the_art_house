@@ -5,7 +5,7 @@ import Image from "next/image";
 import { CheckCircle2, Upload, X } from "lucide-react";
 import type { Medium } from "@/types";
 import { SIZES, FREE_FRAME_SIZES } from "@/data/pricing";
-import { MEDIUM_LABELS } from "@/data/categories";
+import { MEDIUM_LABELS } from "@/lib/labels";
 import { customArtPrice, framePrice } from "@/lib/price";
 import { formatINR } from "@/lib/format";
 

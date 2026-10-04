@@ -37,14 +37,15 @@ export type Product = {
   sizes: string[];
   images: string[];
   rooms: Room[];
-  /** Number of people / pets in the artwork (portraits). Defaults to 1. */
-  subjects?: number;
-  /** Number of panels for wall-art sets. Defaults to 1. */
-  panels?: number;
-  isBestseller?: boolean;
-  isNew?: boolean;
+  /** Number of people / pets in the artwork (portraits). */
+  subjects: number;
+  /** Number of panels for wall-art sets. */
+  panels: number;
+  isBestseller: boolean;
+  isNew: boolean;
   rating: number;
   reviewCount: number;
+  isPublished: boolean;
 };
 
 export type Addons = {
@@ -59,6 +60,8 @@ export type CartLine = {
   size: string;
   addons: Addons;
   qty: number;
+  /** Max quantity for this line (originals are one-of-a-kind). Older saved carts may not have it. */
+  max?: number;
 };
 
 export type PaymentMethod = "online" | "cod";
@@ -69,4 +72,48 @@ export type Coupon = {
   description: string;
   /** Short rule text shown on offer cards. */
   terms: string;
+  percent: number;
+  maxDiscount: number | null;
+  minItems: number;
+  /** Restrict to these groups / sub-categories. Both empty = every product. */
+  groups: string[];
+  subs: string[];
+};
+
+export type HeroSlide = {
+  id: string;
+  eyebrow: string;
+  title: string;
+  text: string;
+  ctaLabel: string;
+  ctaHref: string;
+  image: string;
+  /** "light" = dark text on a bright image, "dark" = white text on a dark image */
+  tone: "light" | "dark";
+};
+
+export type Offer = { id: string; title: string; text: string };
+
+export type Testimonial = {
+  id: string;
+  name: string;
+  city: string;
+  rating: number;
+  text: string;
+  date: string;
+  showOnHome: boolean;
+};
+
+export type FAQ = { id: string; section: "general" | "custom"; q: string; a: string };
+
+/** Everything the storefront renders from the database. */
+export type SiteData = {
+  groups: CategoryGroup[];
+  products: Product[];
+  heroSlides: HeroSlide[];
+  announcements: string[];
+  coupons: Coupon[];
+  offers: Offer[];
+  testimonials: Testimonial[];
+  faqs: FAQ[];
 };

@@ -6,14 +6,16 @@ import CartLineItem from "@/components/cart/CartLineItem";
 import FreeShippingBar from "@/components/cart/FreeShippingBar";
 import { ui, useUI } from "@/context/ui";
 import { useCart } from "@/context/cart";
+import { useCatalog } from "@/context/catalog";
 import { computeTotals, priceLines } from "@/lib/cart";
 import { formatINR } from "@/lib/format";
 
 export default function CartDrawer() {
   const { cartOpen } = useUI();
   const cart = useCart();
-  const lines = priceLines(cart.lines);
-  const totals = computeTotals(lines, cart.coupon, null);
+  const catalog = useCatalog();
+  const lines = priceLines(cart.lines, catalog);
+  const totals = computeTotals(lines, cart.coupon, null, catalog);
 
   return (
     <Drawer

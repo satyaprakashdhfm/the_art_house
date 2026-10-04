@@ -3,11 +3,12 @@
 import { useState } from "react";
 import { X } from "lucide-react";
 import { cartActions } from "@/context/cart";
-import { findCoupon } from "@/data/offers";
+import { useCatalog } from "@/context/catalog";
 
 export default function CouponInput({ applied, error }: { applied: string | null; error?: string }) {
   const [code, setCode] = useState("");
   const [invalid, setInvalid] = useState(false);
+  const catalog = useCatalog();
 
   if (applied) {
     return (
@@ -29,7 +30,7 @@ export default function CouponInput({ applied, error }: { applied: string | null
     <form
       onSubmit={(e) => {
         e.preventDefault();
-        const coupon = findCoupon(code);
+        const coupon = catalog.findCoupon(code);
         if (!coupon) return setInvalid(true);
         cartActions.setCoupon(coupon.code);
         setCode("");

@@ -5,11 +5,10 @@ import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SlidersHorizontal, X } from "lucide-react";
 import ProductGrid from "@/components/product/ProductGrid";
 import Drawer from "@/components/ui/Drawer";
-import { PRODUCTS } from "@/data/products";
-import { CATEGORY_GROUPS, MEDIUM_LABELS, ROOM_LABELS, STYLE_LABELS, TYPE_LABELS } from "@/data/categories";
+import { useCatalog } from "@/context/catalog";
+import { MEDIUM_LABELS, ORIENTATION_LABELS, ROOM_LABELS, STYLE_LABELS, SUBJECT_GROUPS, TYPE_LABELS } from "@/lib/labels";
 import {
   FILTER_KEYS,
-  ORIENTATION_LABELS,
   PRICE_BUCKETS,
   SIZE_FILTERS,
   SORTS,
@@ -33,6 +32,7 @@ export default function ShopView({ locked = {} }: { locked?: LockedFilters }) {
   const pathname = usePathname();
   const params = useSearchParams();
   const [drawerOpen, setDrawerOpen] = useState(false);
+  const catalog = useCatalog();
 
   const active: Filters = {};
   for (const key of FILTER_KEYS) {
@@ -41,7 +41,7 @@ export default function ShopView({ locked = {} }: { locked?: LockedFilters }) {
   }
   const sort = params.get("sort") ?? "featured";
 
-  const products = applyFilters(PRODUCTS, { ...active, ...locked, sort });
+  const products = applyFilters(catalog.products, { ...active, ...locked, sort }, catalog.subName);
 
   function setParam(key: string, value: string | null) {
     const next = new URLSearchParams(params.toString());
@@ -57,11 +57,11 @@ export default function ShopView({ locked = {} }: { locked?: LockedFilters }) {
     router.replace(pathname, { scroll: false });
   }
 
-  const groupSubs = CATEGORY_GROUPS.find((g) => g.slug === (locked.group ?? active.group))?.subs ?? [];
+  const groupSubs = catalog.getGroup(locked.group ?? active.group ?? "")?.subs ?? [];
 
   const sections: Section[] = [
     ...(!locked.group
-      ? [{ key: "group" as const, title: "Category", options: CATEGORY_GROUPS.slice(0, 4).map((g) => ({ value: g.slug, label: g.name })) }]
+      ? [{ key: "group" as const, title: "Category", options: SUBJECT_GROUPS.map((slug) => ({ value: slug, label: catalog.groupName(slug) })) }]
       : []),
     ...(!locked.sub && groupSubs.length > 0
       ? [{ key: "sub" as const, title: "Sub-category", options: groupSubs.map((s) => ({ value: s.slug, label: s.name })) }]
@@ -150,7 +150,7 @@ export default function ShopView({ locked = {} }: { locked?: LockedFilters }) {
                   onClick={() => setParam(k, null)}
                   className="flex items-center gap-1.5 bg-line px-3 py-1.5 text-xs hover:bg-ink hover:text-paper"
                 >
-                  {filterLabel(k, v)} <X className="h-3 w-3" />
+                  {filterLabel(k, v, catalog.subName)} <X className="h-3 w-3" />
                 </button>
               ))}
               <button type="button" onClick={clearAll} className="text-xs underline underline-offset-4">

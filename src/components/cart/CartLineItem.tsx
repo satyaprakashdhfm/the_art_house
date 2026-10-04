@@ -7,7 +7,7 @@ import type { PricedLine } from "@/lib/cart";
 import { cartActions } from "@/context/cart";
 import { formatINR } from "@/lib/format";
 import { sizeLabel } from "@/lib/price";
-import { MEDIUM_LABELS } from "@/data/categories";
+import { MEDIUM_LABELS } from "@/lib/labels";
 
 export default function CartLineItem({ line, onNavigate }: { line: PricedLine; onNavigate?: () => void }) {
   const { product, addons } = line;

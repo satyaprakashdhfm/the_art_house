@@ -4,11 +4,12 @@ import Link from "next/link";
 import { ChevronDown } from "lucide-react";
 import Drawer from "@/components/ui/Drawer";
 import { ui, useUI } from "@/context/ui";
-import { CATEGORY_GROUPS } from "@/data/categories";
+import { useCatalog } from "@/context/catalog";
 import { NAV_LINKS, subHref } from "@/components/layout/nav";
 
 export default function MobileMenu() {
   const { menuOpen } = useUI();
+  const { groups } = useCatalog();
 
   return (
     <Drawer open={menuOpen} onClose={ui.closeMenu} side="left" title="Menu">
@@ -21,7 +22,7 @@ export default function MobileMenu() {
                 <ChevronDown className="h-4 w-4 transition-transform group-open:rotate-180" />
               </summary>
               <div className="space-y-4 pb-4">
-                {CATEGORY_GROUPS.map((g) => (
+                {groups.map((g) => (
                   <div key={g.slug}>
                     <p className="eyebrow">{g.name}</p>
                     <div className="mt-2 flex flex-wrap gap-x-4 gap-y-2">
@@ -56,6 +57,9 @@ export default function MobileMenu() {
         </Link>
         <Link href="/contact" onClick={ui.closeMenu} className="block border-b border-line py-3">
           Contact
+        </Link>
+        <Link href="/login" onClick={ui.closeMenu} className="block border-b border-line py-3">
+          My account
         </Link>
       </nav>
     </Drawer>
