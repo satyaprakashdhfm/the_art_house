@@ -32,21 +32,35 @@ export type Filters = Partial<Record<FilterKey, string>> & { sort?: string };
 
 export const FILTER_KEYS: FilterKey[] = ["group", "sub", "medium", "style", "size", "price", "orientation", "type", "room", "q"];
 
+/** Multi-select filters are stored comma-separated in the URL, e.g. ?medium=oil,acrylic. */
+export function splitValues(value?: string) {
+  return value ? value.split(",").filter(Boolean) : [];
+}
+
+/** Values within one filter are OR-ed; different filters are AND-ed. */
 export function applyFilters(products: Product[], f: Filters, subName: (slug: string) => string) {
-  const bucket = PRICE_BUCKETS.find((b) => b.key === f.price);
+  const list = (key: FilterKey) => splitValues(f[key]);
+  const matches = (allowed: string[], value: string) => allowed.length === 0 || allowed.includes(value);
+  const overlaps = (allowed: string[], values: string[]) => allowed.length === 0 || values.some((v) => allowed.includes(v));
+
+  const [groups, subs, mediums, styles, sizes, orientations, types, rooms] = (
+    ["group", "sub", "medium", "style", "size", "orientation", "type", "room"] as const
+  ).map(list);
+  const prices = list("price");
+  const buckets = PRICE_BUCKETS.filter((b) => prices.includes(b.key));
   const q = f.q?.trim().toLowerCase();
   const result = products.filter((p) => {
-    if (f.group && p.group !== f.group) return false;
-    if (f.sub && p.subCategory !== f.sub) return false;
-    if (f.medium && p.medium !== f.medium) return false;
-    if (f.style && p.style !== f.style) return false;
-    if (f.size && !p.sizes.includes(f.size)) return false;
-    if (f.orientation && p.orientation !== f.orientation) return false;
-    if (f.type && p.type !== f.type) return false;
-    if (f.room && !p.rooms.includes(f.room as Product["rooms"][number])) return false;
-    if (bucket) {
+    if (!matches(groups, p.group)) return false;
+    if (!matches(subs, p.subCategory)) return false;
+    if (!matches(mediums, p.medium)) return false;
+    if (!matches(styles, p.style)) return false;
+    if (!overlaps(sizes, p.sizes)) return false;
+    if (!matches(orientations, p.orientation)) return false;
+    if (!matches(types, p.type)) return false;
+    if (!overlaps(rooms, p.rooms)) return false;
+    if (buckets.length > 0) {
       const from = startingPrice(p);
-      if (from < bucket.min || from > bucket.max) return false;
+      if (!buckets.some((b) => from >= b.min && from <= b.max)) return false;
     }
     if (q) {
       const hay = [p.title, subName(p.subCategory), MEDIUM_LABELS[p.medium], STYLE_LABELS[p.style]].join(" ").toLowerCase();
