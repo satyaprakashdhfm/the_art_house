@@ -1,10 +1,11 @@
 import { cache } from "react";
-import type { SiteData } from "@/types";
+import type { GalleryItem, SiteData } from "@/types";
 import { createCatalog } from "@/lib/catalog";
 import { createPublicClient } from "@/lib/supabase/public";
 import {
   toCoupon,
   toFAQ,
+  toGalleryItem,
   toGroups,
   toHeroSlide,
   toOffer,
@@ -13,6 +14,7 @@ import {
   type AnnouncementRow,
   type CouponRow,
   type FAQRow,
+  type GalleryItemRow,
   type GroupRow,
   type HeroSlideRow,
   type OfferRow,
@@ -54,3 +56,10 @@ export const getSiteData = cache(async (): Promise<SiteData> => {
 export async function getCatalog() {
   return createCatalog(await getSiteData());
 }
+
+/** Finished / sold works for /gallery. Loaded separately so other pages don't fetch them. */
+export const getGallery = cache(async (): Promise<GalleryItem[]> => {
+  const { data, error } = await createPublicClient().from("gallery_items").select("*").eq("is_active", true).order("sort_order");
+  if (error) throw new Error(`Could not load gallery: ${error.message}`);
+  return (data as GalleryItemRow[]).map(toGalleryItem);
+});

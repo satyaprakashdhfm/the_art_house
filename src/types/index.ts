@@ -94,6 +94,18 @@ export type HeroSlide = {
 
 export type Offer = { id: string; title: string; text: string };
 
+/** A finished / sold piece shown on /gallery (not for sale, so no price). */
+export type GalleryItem = {
+  id: string;
+  title: string;
+  medium: Medium;
+  size: string;
+  year: number | null;
+  note: string;
+  image: string;
+  isSold: boolean;
+};
+
 export type Testimonial = {
   id: string;
   name: string;

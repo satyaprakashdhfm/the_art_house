@@ -1,4 +1,4 @@
-import type { CategoryGroup, Coupon, FAQ, HeroSlide, Offer, Product, Testimonial } from "@/types";
+import type { CategoryGroup, Coupon, FAQ, GalleryItem, HeroSlide, Medium, Offer, Product, Testimonial } from "@/types";
 
 /** Row shapes of the Supabase tables (see supabase/migrations). */
 export type ProductRow = {
@@ -40,6 +40,20 @@ export type HeroSlideRow = {
   tone: "light" | "dark";
   is_active: boolean;
   sort_order: number;
+};
+
+export type GalleryItemRow = {
+  id: string;
+  title: string;
+  medium: Medium;
+  size_label: string;
+  year: number | null;
+  note: string;
+  image: string;
+  is_sold: boolean;
+  is_active: boolean;
+  sort_order: number;
+  created_at?: string;
 };
 
 export type AnnouncementRow = { id: string; message: string; is_active: boolean; sort_order: number };
@@ -152,3 +166,14 @@ export const toTestimonial = (r: TestimonialRow): Testimonial => ({
 });
 
 export const toFAQ = (r: FAQRow): FAQ => ({ id: r.id, section: r.section, q: r.question, a: r.answer });
+
+export const toGalleryItem = (r: GalleryItemRow): GalleryItem => ({
+  id: r.id,
+  title: r.title,
+  medium: r.medium,
+  size: r.size_label,
+  year: r.year,
+  note: r.note,
+  image: r.image,
+  isSold: r.is_sold,
+});

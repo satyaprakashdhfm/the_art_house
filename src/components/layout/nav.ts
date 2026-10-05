@@ -5,6 +5,7 @@ export const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/shop", label: "Shop" },
   { href: "/categories", label: "Categories", mega: true },
+  { href: "/gallery", label: "Gallery" },
   { href: "/custom-art", label: "Custom Art" },
   { href: "/offers", label: "Offers" },
   { href: "/about", label: "About" },

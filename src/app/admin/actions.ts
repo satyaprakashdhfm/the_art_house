@@ -13,6 +13,7 @@ export type TableName =
   | "offers"
   | "testimonials"
   | "faqs"
+  | "gallery_items"
   | "category_groups"
   | "subcategories";
 
@@ -52,6 +53,12 @@ const TABLES: Record<TableName, TableConfig> = {
     flags: ["is_active", "show_on_home"],
   },
   faqs: { key: "id", columns: ["section", "question", "answer", "is_active", "sort_order"], flags: ["is_active"] },
+  gallery_items: {
+    key: "id",
+    columns: ["title", "medium", "size_label", "year", "note", "image", "is_sold", "is_active", "sort_order"],
+    images: ["image"],
+    flags: ["is_active", "is_sold"],
+  },
   category_groups: { key: "slug", columns: ["name", "tagline", "image", "sort_order"], images: ["image"], flags: [] },
   subcategories: {
     key: "slug",

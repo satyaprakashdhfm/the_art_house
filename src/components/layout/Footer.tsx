@@ -59,6 +59,11 @@ export default async function Footer() {
               </li>
             ))}
             <li>
+              <Link href="/gallery" className="text-card/75 transition-colors hover:text-gold">
+                Gallery
+              </Link>
+            </li>
+            <li>
               <Link href="/offers" className="text-card/75 transition-colors hover:text-gold">
                 Offers
               </Link>
