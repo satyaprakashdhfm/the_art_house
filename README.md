@@ -20,6 +20,9 @@ Open http://localhost:3000. The admin dashboard is at http://localhost:3000/admi
   Dashboard → Project Settings → API Keys. Add the same two variables to your hosting provider (e.g. Vercel).
 - Schema, security policies and the `media` image bucket: [`supabase/migrations/`](supabase/migrations/).
   Starting content: [`supabase/seed.sql`](supabase/seed.sql).
+- Apply new migrations with `npm run db:migrate` (`-- --status` lists applied / pending). It needs
+  `SUPABASE_DB_URL` in `.env.local`: Dashboard → **Connect** → Connection String → Method **Session pooler**.
+  This is the database password, so it stays local and is never added to the hosting provider.
 
 ### Google sign-in (one-time setup)
 
