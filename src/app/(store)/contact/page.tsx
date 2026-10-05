@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Clock, Mail, MapPin, MessageCircle } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import ContactForm from "@/components/ui/ContactForm";
+import { WHATSAPP_DISPLAY } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 };
 
 const DETAILS = [
-  { icon: MessageCircle, title: "WhatsApp", text: "+91 90000 00000" },
+  { icon: MessageCircle, title: "WhatsApp", text: WHATSAPP_DISPLAY },
   { icon: Mail, title: "Email", text: "hello@veronaarts.example" },
   { icon: MapPin, title: "Studio", text: "Studio address, India" },
   { icon: Clock, title: "Hours", text: "Mon – Sat, 10am – 7pm IST" },

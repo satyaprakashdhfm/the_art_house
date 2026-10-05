@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Mail, MapPin, MessageCircle } from "lucide-react";
 import { getCatalog } from "@/lib/site-data";
 import { SUBJECT_GROUPS } from "@/lib/labels";
+import { WHATSAPP_DISPLAY } from "@/lib/contact";
 
 const HELP = [
   { href: "/contact", label: "Contact Us" },
@@ -32,7 +33,7 @@ export default async function Footer() {
           </p>
           <ul className="mt-5 space-y-2 text-sm text-card/75">
             <li className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4 text-gold" /> +91 90000 00000 (WhatsApp)
+              <MessageCircle className="h-4 w-4 text-gold" /> {WHATSAPP_DISPLAY} (WhatsApp)
             </li>
             <li className="flex items-center gap-2">
               <Mail className="h-4 w-4 text-gold" /> hello@veronaarts.example

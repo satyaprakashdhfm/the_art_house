@@ -1,28 +1,103 @@
 "use client";
 
-import { useEffect, useRef, useState } from "react";
-import Image from "next/image";
-import { CheckCircle2, Upload, X } from "lucide-react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
+import { ArrowRight, Check, CheckCircle2, Frame, Lock, Minus, Plus, Trees, Zap, type LucideIcon } from "lucide-react";
 import type { Medium } from "@/types";
-import { SIZES, FREE_FRAME_SIZES } from "@/data/pricing";
+import { SIZES, FREE_FRAME_SIZES, EXTRA_SUBJECT_RATE, DETAILED_BACKGROUND_RATE, RUSH_RATE } from "@/data/pricing";
 import { MEDIUM_LABELS } from "@/lib/labels";
 import { customArtPrice, framePrice } from "@/lib/price";
 import { formatINR } from "@/lib/format";
+import PhotoDropzone, { type Photo } from "@/components/custom/PhotoDropzone";
+import WhatsAppHelp from "@/components/custom/WhatsAppHelp";
 
-const MAX_PHOTOS = 5;
+const MEDIUM_TEXT: Record<Medium, string> = {
+  pencil: "Classic and timeless black & white art",
+  oil: "Rich textures and vibrant colours",
+  acrylic: "Contemporary and durable finish",
+  digital: "High-quality digital illustration",
+};
+
+const BACKGROUNDS = { simple: "Simple / plain", artist: "Let the artist suggest" } as const;
+const MAX_SUBJECTS = 5;
+const NOTES_LIMIT = 500;
+const pct = (rate: number) => `+ ${Math.round(rate * 100)}%`;
+
+function SectionTitle({ n, title, text }: { n: number; title: string; text: string }) {
+  return (
+    <div className="mb-6">
+      <h2 className="font-serif text-3xl">
+        {n}. {title}
+      </h2>
+      <p className="mt-1 text-sm text-muted">{text}</p>
+    </div>
+  );
+}
+
+/** Selectable card used for medium and size. */
+function ChoiceCard({ selected, onClick, children }: { selected: boolean; onClick: () => void; children: ReactNode }) {
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      aria-pressed={selected}
+      className={`relative border p-4 text-left transition-colors ${
+        selected ? "border-ink bg-ink text-paper" : "border-line bg-paper hover:border-ink"
+      }`}
+    >
+      <span
+        className={`absolute top-3 right-3 flex h-5 w-5 items-center justify-center rounded-full border ${
+          selected ? "border-paper bg-paper text-ink" : "border-line"
+        }`}
+      >
+        {selected && <Check className="h-3 w-3" strokeWidth={3} />}
+      </span>
+      {children}
+    </button>
+  );
+}
+
+function AddOn({ icon: Icon, title, text, price, checked, onChange }: { icon: LucideIcon; title: string; text: string; price: string; checked: boolean; onChange: (v: boolean) => void }) {
+  return (
+    <label className={`flex cursor-pointer gap-3 border p-4 transition-colors ${checked ? "border-gold bg-gold/5" : "border-line bg-paper hover:border-ink"}`}>
+      <input type="checkbox" checked={checked} onChange={(e) => onChange(e.target.checked)} className="mt-0.5 h-4 w-4 shrink-0 accent-ink" />
+      <Icon className="mt-0.5 h-5 w-5 shrink-0 text-gold" strokeWidth={1.5} />
+      <span>
+        <span className="block text-sm font-medium">{title}</span>
+        <span className="block text-xs text-muted">{text}</span>
+        <span className="mt-1 block text-sm font-medium text-gold">{price}</span>
+      </span>
+    </label>
+  );
+}
+
+function Field({ id, label, required, children, className = "" }: { id: string; label: string; required?: boolean; children: ReactNode; className?: string }) {
+  return (
+    <div className={className}>
+      <label htmlFor={id} className="mb-1.5 block text-sm font-medium">
+        {label} {required && <span className="text-sale">*</span>}
+      </label>
+      {children}
+    </div>
+  );
+}
 
 export default function CustomArtForm() {
   const [medium, setMedium] = useState<Medium>("pencil");
   const [size, setSize] = useState("A3");
   const [subjects, setSubjects] = useState(1);
+  const [background, setBackground] = useState<keyof typeof BACKGROUNDS>("simple");
   const [detailedBackground, setDetailedBackground] = useState(false);
   const [frame, setFrame] = useState(false);
   const [rush, setRush] = useState(false);
-  const [photos, setPhotos] = useState<{ file: File; url: string }[]>([]);
+  const [photos, setPhotos] = useState<Photo[]>([]);
+  const [notes, setNotes] = useState("");
   const [submittedId, setSubmittedId] = useState<string | null>(null);
 
   const sizes = SIZES[medium].filter((s) => s.key !== "FILE");
+  const sizeInfo = sizes.find((s) => s.key === size);
   const quote = customArtPrice({ medium, size, subjects, detailedBackground, frame, rush });
+  const freeFrame = FREE_FRAME_SIZES.includes(size);
+  const addOns = [frame && "Frame", rush && "Rush order", detailedBackground && "Detailed background"].filter(Boolean);
 
   // Release preview object URLs when the component unmounts.
   const photosRef = useRef(photos);
@@ -37,26 +112,12 @@ export default function CustomArtForm() {
     if (!keys.includes(size) || size === "FILE") setSize(m === "pencil" || m === "digital" ? "A3" : "18x24");
   }
 
-  function addPhotos(files: FileList | null) {
-    if (!files) return;
-    const next = Array.from(files)
-      .filter((f) => f.type.startsWith("image/"))
-      .slice(0, MAX_PHOTOS - photos.length)
-      .map((file) => ({ file, url: URL.createObjectURL(file) }));
-    setPhotos((p) => [...p, ...next]);
-  }
-
-  function removePhoto(url: string) {
-    URL.revokeObjectURL(url);
-    setPhotos((p) => p.filter((x) => x.url !== url));
-  }
-
   if (submittedId) {
     return (
-      <div className="border border-line bg-card p-10 text-center">
-        <CheckCircle2 className="mx-auto h-12 w-12 text-gold" strokeWidth={1.25} />
-        <h3 className="mt-4 font-serif text-2xl">Request received!</h3>
-        <p className="mt-2 text-sm text-muted">
+      <div className="mx-auto max-w-2xl border border-line bg-card p-12 text-center">
+        <CheckCircle2 className="mx-auto h-14 w-14 text-gold" strokeWidth={1.25} />
+        <h2 className="mt-4 font-serif text-3xl">Request received!</h2>
+        <p className="mt-3 text-muted">
           Request ID <span className="font-medium text-ink">{submittedId}</span>. Our artist will contact you on WhatsApp
           within 24 hours with a confirmed quote and timeline.
         </p>
@@ -68,9 +129,17 @@ export default function CustomArtForm() {
     );
   }
 
+  const summary: [string, string][] = [
+    ["Medium", MEDIUM_LABELS[medium]],
+    ["Size", sizeInfo ? `${sizeInfo.label}${sizeInfo.detail !== "Canvas" ? ` (${sizeInfo.detail})` : " canvas"}` : size],
+    ["People / Pets", String(subjects)],
+    ["Background", detailedBackground ? "Detailed scene" : BACKGROUNDS[background]],
+    ["Add-ons", addOns.length ? addOns.join(", ") : "None"],
+  ];
+
   return (
     <form
-      className="grid gap-10 lg:grid-cols-[1fr_360px]"
+      className="grid gap-12 lg:grid-cols-[1fr_400px]"
       onSubmit={(e) => {
         e.preventDefault();
         setSubmittedId(`CUS-${Date.now().toString(36).toUpperCase()}`);
@@ -78,190 +147,201 @@ export default function CustomArtForm() {
         setPhotos([]);
       }}
     >
-      <div className="space-y-8">
-        {/* Step 1: calculator */}
-        <fieldset>
-          <legend className="font-serif text-xl">1. Choose your artwork</legend>
-          <div className="mt-5 space-y-5">
+      <div className="min-w-0 space-y-16">
+        {/* 1. Artwork */}
+        <section>
+          <SectionTitle n={1} title="Choose your artwork" text="Select the medium, size and details for your custom painting." />
+          <div className="space-y-8">
             <div>
-              <p className="label">Medium</p>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-4">
+              <p className="mb-3 text-sm font-medium">Medium</p>
+              <div className="grid grid-cols-2 gap-3 xl:grid-cols-4">
                 {(Object.keys(MEDIUM_LABELS) as Medium[]).map((m) => (
-                  <button
-                    key={m}
-                    type="button"
-                    onClick={() => changeMedium(m)}
-                    aria-pressed={medium === m}
-                    className={`border px-3 py-2.5 text-sm ${medium === m ? "border-ink bg-ink text-paper" : "border-line bg-card hover:border-ink"}`}
-                  >
-                    {MEDIUM_LABELS[m]}
-                  </button>
+                  <ChoiceCard key={m} selected={medium === m} onClick={() => changeMedium(m)}>
+                    <span className="block pr-6 font-serif text-xl">{MEDIUM_LABELS[m]}</span>
+                    <span className={`mt-1 block text-xs leading-relaxed ${medium === m ? "text-paper/75" : "text-muted"}`}>{MEDIUM_TEXT[m]}</span>
+                  </ChoiceCard>
                 ))}
               </div>
             </div>
+
             <div>
-              <p className="label">Size</p>
-              <div className="grid grid-cols-2 gap-2 sm:grid-cols-5">
+              <p className="mb-3 text-sm font-medium">Size</p>
+              <div className="grid grid-cols-2 gap-3 sm:grid-cols-5">
                 {sizes.map((s) => (
-                  <button
-                    key={s.key}
-                    type="button"
-                    onClick={() => setSize(s.key)}
-                    aria-pressed={size === s.key}
-                    className={`border px-3 py-2 text-left ${size === s.key ? "border-ink bg-ink text-paper" : "border-line bg-card hover:border-ink"}`}
-                  >
-                    <span className="block text-sm">{s.label}</span>
-                    <span className={`block text-[11px] ${size === s.key ? "text-paper/70" : "text-muted"}`}>{s.detail}</span>
-                  </button>
+                  <ChoiceCard key={s.key} selected={size === s.key} onClick={() => setSize(s.key)}>
+                    <span className="block pr-6 font-medium">{s.label}</span>
+                    <span className={`mt-0.5 block text-xs ${size === s.key ? "text-paper/75" : "text-muted"}`}>{s.detail}</span>
+                  </ChoiceCard>
                 ))}
               </div>
             </div>
-            <div className="grid gap-5 sm:grid-cols-2">
+
+            <div className="grid gap-6 sm:grid-cols-2">
               <div>
-                <label htmlFor="subjects" className="label">
-                  Number of people / pets
+                <p className="mb-3 text-sm font-medium">Number of people / pets</p>
+                <div className="flex h-12 items-stretch border border-line bg-paper">
+                  <button
+                    type="button"
+                    aria-label="Fewer"
+                    disabled={subjects <= 1}
+                    onClick={() => setSubjects((n) => n - 1)}
+                    className="w-12 text-gold transition-colors hover:bg-card disabled:text-line"
+                  >
+                    <Minus className="mx-auto h-4 w-4" />
+                  </button>
+                  <output aria-live="polite" className="flex flex-1 items-center justify-center border-x border-line font-medium">
+                    {subjects}
+                  </output>
+                  <button
+                    type="button"
+                    aria-label="More"
+                    disabled={subjects >= MAX_SUBJECTS}
+                    onClick={() => setSubjects((n) => n + 1)}
+                    className="w-12 text-gold transition-colors hover:bg-card disabled:text-line"
+                  >
+                    <Plus className="mx-auto h-4 w-4" />
+                  </button>
+                </div>
+                <p className="mt-2 text-xs text-muted">
+                  e.g. 1 person, 2 people, 1 pet. Each extra adds {Math.round(EXTRA_SUBJECT_RATE * 100)}%.
+                </p>
+              </div>
+              <div>
+                <label htmlFor="background" className="mb-3 block text-sm font-medium">
+                  Background
                 </label>
-                <select id="subjects" value={subjects} onChange={(e) => setSubjects(Number(e.target.value))} className="input">
-                  {[1, 2, 3, 4, 5].map((n) => (
-                    <option key={n} value={n}>
-                      {n} {n > 1 ? `(+${(n - 1) * 40}%)` : ""}
+                <select id="background" value={background} onChange={(e) => setBackground(e.target.value as keyof typeof BACKGROUNDS)} className="input h-12">
+                  {Object.entries(BACKGROUNDS).map(([value, label]) => (
+                    <option key={value} value={value}>
+                      {label}
                     </option>
                   ))}
                 </select>
-              </div>
-              <div>
-                <label htmlFor="background" className="label">
-                  Background
-                </label>
-                <select
-                  id="background"
-                  value={detailedBackground ? "detailed" : "simple"}
-                  onChange={(e) => setDetailedBackground(e.target.value === "detailed")}
-                  className="input"
-                >
-                  <option value="simple">Simple / plain</option>
-                  <option value="detailed">Detailed scene (+20%)</option>
-                </select>
+                <p className="mt-2 text-xs text-muted">Choose a background or let our artists suggest one.</p>
               </div>
             </div>
-            <div className="flex flex-wrap gap-x-8 gap-y-3 text-sm">
-              <label className="flex items-center gap-2">
-                <input type="checkbox" checked={frame} onChange={(e) => setFrame(e.target.checked)} className="accent-ink" />
-                Add frame {FREE_FRAME_SIZES.includes(size) ? "(free on this size)" : `(+${formatINR(framePrice(size))})`}
-              </label>
-              <label className="flex items-center gap-2">
-                <input type="checkbox" checked={rush} onChange={(e) => setRush(e.target.checked)} className="accent-ink" />
-                Rush order — 7 days (+25%)
-              </label>
+
+            <div>
+              <p className="mb-3 text-sm font-medium">
+                Add-ons <span className="font-normal text-muted">(optional)</span>
+              </p>
+              <div className="grid gap-3 sm:grid-cols-3">
+                <AddOn icon={Frame} title="Framing" text="High-quality wooden frame" price={freeFrame ? "Free on this size" : `+ ${formatINR(framePrice(size))}`} checked={frame} onChange={setFrame} />
+                <AddOn icon={Zap} title="Rush order (7 days)" text="Get your artwork faster" price={pct(RUSH_RATE)} checked={rush} onChange={setRush} />
+                <AddOn icon={Trees} title="Detailed background" text="Complex scenery or setting" price={pct(DETAILED_BACKGROUND_RATE)} checked={detailedBackground} onChange={setDetailedBackground} />
+              </div>
             </div>
           </div>
-        </fieldset>
+        </section>
 
-        {/* Step 2: photos */}
-        <fieldset>
-          <legend className="font-serif text-xl">2. Upload your photos</legend>
-          <p className="mt-1 text-xs text-muted">Clear, well-lit photos work best. Up to {MAX_PHOTOS} images.</p>
-          <label className="mt-4 flex cursor-pointer flex-col items-center justify-center gap-2 border border-dashed border-muted/50 bg-card px-6 py-10 text-center hover:border-ink">
-            <Upload className="h-6 w-6 text-gold" />
-            <span className="text-sm">Click to choose photos</span>
-            <span className="text-xs text-muted">JPG or PNG</span>
-            <input
-              type="file"
-              accept="image/*"
-              multiple
-              className="sr-only"
-              disabled={photos.length >= MAX_PHOTOS}
-              onChange={(e) => {
-                addPhotos(e.target.files);
-                e.target.value = "";
-              }}
-            />
-          </label>
-          {photos.length > 0 && (
-            <div className="mt-4 flex flex-wrap gap-3">
-              {photos.map((p) => (
-                <div key={p.url} className="relative h-24 w-24 overflow-hidden bg-line">
-                  <Image src={p.url} alt={p.file.name} fill unoptimized className="object-cover" />
-                  <button
-                    type="button"
-                    onClick={() => removePhoto(p.url)}
-                    aria-label="Remove photo"
-                    className="absolute top-1 right-1 rounded-full bg-paper p-0.5"
-                  >
-                    <X className="h-3 w-3" />
-                  </button>
-                </div>
-              ))}
-            </div>
-          )}
-        </fieldset>
+        {/* 2. Photos */}
+        <section id="upload" className="scroll-mt-28">
+          <SectionTitle n={2} title="Upload your photos" text={`Clear, well-lit photos work best. You can upload up to 5 images.`} />
+          <PhotoDropzone photos={photos} onChange={setPhotos} />
+        </section>
 
-        {/* Step 3: details */}
-        <fieldset>
-          <legend className="font-serif text-xl">3. Your details</legend>
-          <div className="mt-5 grid gap-4 sm:grid-cols-2">
-            <div>
-              <label htmlFor="c-name" className="label">Name</label>
-              <input id="c-name" required className="input" autoComplete="name" />
-            </div>
-            <div>
-              <label htmlFor="c-phone" className="label">WhatsApp number</label>
-              <input id="c-phone" required pattern="[6-9][0-9]{9}" inputMode="numeric" maxLength={10} className="input" title="10-digit mobile number" />
-            </div>
-            <div>
-              <label htmlFor="c-email" className="label">Email</label>
-              <input id="c-email" type="email" required className="input" autoComplete="email" />
-            </div>
-            <div>
-              <label htmlFor="c-occasion" className="label">Occasion</label>
-              <select id="c-occasion" className="input" defaultValue="">
+        {/* 3. Details */}
+        <section>
+          <SectionTitle n={3} title="Your details" text="We'll confirm everything with you on WhatsApp before we start." />
+          <div className="grid gap-x-6 gap-y-5 sm:grid-cols-2">
+            <Field id="c-name" label="Full name" required>
+              <input id="c-name" required className="input h-12" autoComplete="name" placeholder="Enter your full name" />
+            </Field>
+            <Field id="c-phone" label="Phone number" required>
+              <input id="c-phone" type="tel" required pattern="[6-9][0-9]{9}" inputMode="numeric" maxLength={10} title="10-digit mobile number" className="input h-12" autoComplete="tel-national" placeholder="10-digit mobile number" />
+            </Field>
+            <Field id="c-email" label="Email address" required>
+              <input id="c-email" type="email" required className="input h-12" autoComplete="email" placeholder="you@example.com" />
+            </Field>
+            <Field id="c-whatsapp" label="WhatsApp number" required>
+              <input id="c-whatsapp" type="tel" required pattern="[6-9][0-9]{9}" inputMode="numeric" maxLength={10} title="10-digit mobile number" className="input h-12" placeholder="Where we'll send your preview" />
+            </Field>
+            <Field id="c-address" label="Delivery address" required className="sm:col-span-2">
+              <input id="c-address" required className="input h-12" autoComplete="street-address" placeholder="House no., area, city, state, pincode" />
+            </Field>
+            <Field id="c-occasion" label="Occasion">
+              <select id="c-occasion" className="input h-12" defaultValue="">
                 <option value="">Select (optional)</option>
                 {["Birthday", "Anniversary", "Wedding", "Housewarming", "Memorial", "Festival", "Just because"].map((o) => (
                   <option key={o}>{o}</option>
                 ))}
               </select>
-            </div>
-            <div>
-              <label htmlFor="c-deadline" className="label">Needed by</label>
-              <input id="c-deadline" type="date" className="input" />
-            </div>
-            <div className="sm:col-span-2">
-              <label htmlFor="c-notes" className="label">Notes for the artist</label>
-              <textarea id="c-notes" rows={3} className="input" placeholder="Background ideas, colours, text to include…" />
-            </div>
+            </Field>
+            <Field id="c-deadline" label="Needed by">
+              <input id="c-deadline" type="date" className="input h-12" />
+            </Field>
+            <Field id="c-notes" label="Special instructions" className="sm:col-span-2">
+              <textarea
+                id="c-notes"
+                rows={4}
+                maxLength={NOTES_LIMIT}
+                value={notes}
+                onChange={(e) => setNotes(e.target.value)}
+                className="input resize-y"
+                placeholder="e.g. background ideas, colour preferences, text to include…"
+              />
+              <p className="mt-1 text-right text-xs text-muted">
+                {notes.length}/{NOTES_LIMIT}
+              </p>
+            </Field>
           </div>
-        </fieldset>
+        </section>
       </div>
 
-      {/* Live quote */}
-      <aside className="h-fit space-y-4 border border-line bg-card p-6 lg:sticky lg:top-28">
-        <p className="eyebrow">Your estimate</p>
-        <p className="font-serif text-4xl">{formatINR(quote.total)}</p>
-        <dl className="space-y-2 text-sm">
-          <div className="flex justify-between">
-            <dt className="text-muted">{MEDIUM_LABELS[medium]} · {sizes.find((s) => s.key === size)?.label}</dt>
-            <dd>{formatINR(quote.painting)}</dd>
-          </div>
-          {frame && (
+      {/* Live estimate */}
+      <aside className="h-fit space-y-4 lg:sticky lg:top-28">
+        <div className="border border-line bg-card p-7 shadow-sm">
+          <p className="eyebrow">Your estimate</p>
+          <p className="mt-2 font-serif text-5xl">{formatINR(quote.total)}</p>
+          <dl className="mt-6 space-y-2.5 text-sm">
+            {summary.map(([k, v]) => (
+              <div key={k} className="flex justify-between gap-4">
+                <dt className="text-muted">{k}</dt>
+                <dd className="text-right">{v}</dd>
+              </div>
+            ))}
+          </dl>
+          <dl className="mt-5 space-y-2.5 border-t border-line pt-5 text-sm">
             <div className="flex justify-between">
-              <dt className="text-muted">Frame</dt>
-              <dd>{quote.frame === 0 ? "Free" : formatINR(quote.frame)}</dd>
+              <dt>Artwork price</dt>
+              <dd>{formatINR(quote.painting)}</dd>
             </div>
+            {frame && (
+              <div className="flex justify-between">
+                <dt>Frame</dt>
+                <dd>{quote.frame === 0 ? "Free" : formatINR(quote.frame)}</dd>
+              </div>
+            )}
+            <div className="flex justify-between bg-paper px-3 py-2.5 font-medium">
+              <dt>Advance to start (50%)</dt>
+              <dd className="text-gold-dark">{formatINR(quote.advance)}</dd>
+            </div>
+          </dl>
+          <ul className="mt-5 space-y-2 text-sm text-muted">
+            {["Free digital preview before painting", "2 free revisions", `Delivery in ${rush ? "7–10" : "12–18"} days`, "Carefully packed and shipped to your door"].map((t) => (
+              <li key={t} className="flex items-center gap-2">
+                <Check className="h-4 w-4 shrink-0 text-gold" /> {t}
+              </li>
+            ))}
+          </ul>
+          {photos.length === 0 ? (
+            <button
+              type="button"
+              onClick={() => document.getElementById("upload")?.scrollIntoView({ behavior: "smooth" })}
+              className="btn-primary mt-7 w-full py-4 text-sm"
+            >
+              Continue to upload photos <ArrowRight className="h-4 w-4" />
+            </button>
+          ) : (
+            <button type="submit" className="btn-primary mt-7 w-full py-4 text-sm">
+              Submit request <ArrowRight className="h-4 w-4" />
+            </button>
           )}
-          <div className="flex justify-between border-t border-line pt-2 font-medium">
-            <dt>Advance to start (50%)</dt>
-            <dd>{formatINR(quote.advance)}</dd>
-          </div>
-        </dl>
-        <ul className="space-y-1 text-xs text-muted">
-          <li>✓ Free digital preview before painting</li>
-          <li>✓ 2 free revisions</li>
-          <li>✓ Delivery in {rush ? "7–10" : "12–18"} days</li>
-        </ul>
-        <button type="submit" className="btn-primary w-full" disabled={photos.length === 0}>
-          Submit request
-        </button>
-        {photos.length === 0 && <p className="text-center text-xs text-muted">Upload at least one photo to continue.</p>}
+          <p className="mt-3 flex items-center justify-center gap-1.5 text-xs text-muted">
+            <Lock className="h-3 w-3" /> Nothing is charged until you approve the quote
+          </p>
+        </div>
+        <WhatsAppHelp />
       </aside>
     </form>
   );
