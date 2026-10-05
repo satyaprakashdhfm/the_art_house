@@ -26,6 +26,11 @@ export default function Header() {
   const wishCount = useWishlist().length;
 
   const isActive = (href: string) => (href === "/" ? pathname === "/" : pathname.startsWith(href));
+  // Gold underline on the active link and on hover (also while the Categories mega menu is open).
+  const navLinkClass = (href: string) =>
+    `relative py-2 text-sm tracking-wide transition-colors after:absolute after:inset-x-0 after:-bottom-0.5 after:h-0.5 after:origin-left after:bg-gold after:transition-transform hover:text-gold hover:after:scale-x-100 group-hover:text-gold group-hover:after:scale-x-100 ${
+      isActive(href) ? "text-gold after:scale-x-100" : "after:scale-x-0"
+    }`;
 
   return (
     <header className="sticky top-0 z-40 border-b border-line bg-paper/95 text-ink backdrop-blur">
@@ -58,7 +63,7 @@ export default function Header() {
               <div key={link.href} className="group flex h-full items-center">
                 <Link
                   href={link.href}
-                  className={`text-sm tracking-wide transition-colors hover:text-gold ${isActive(link.href) ? "text-gold" : ""}`}
+                  className={navLinkClass(link.href)}
                 >
                   {link.label}
                 </Link>
@@ -68,7 +73,7 @@ export default function Header() {
               <Link
                 key={link.href}
                 href={link.href}
-                className={`text-sm tracking-wide transition-colors hover:text-gold ${isActive(link.href) ? "text-gold" : ""}`}
+                className={navLinkClass(link.href)}
               >
                 {link.label}
               </Link>

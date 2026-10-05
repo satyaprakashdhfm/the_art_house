@@ -7,17 +7,23 @@ export default function PageHeader({
   title,
   description,
   crumbs = [],
+  aside,
 }: {
   title: string;
   description?: string;
   crumbs?: Crumb[];
+  /** Optional content on the right of the header (hidden on small screens). */
+  aside?: React.ReactNode;
 }) {
   return (
     <div className="border-b border-line bg-card">
-      <div className="container-page py-10 sm:py-14">
-        {crumbs.length > 0 && <Breadcrumbs crumbs={crumbs} />}
-        <h1 className="heading mt-3 sm:text-5xl">{title}</h1>
-        {description && <p className="mt-3 max-w-2xl text-muted">{description}</p>}
+      <div className="container-page flex items-center justify-between gap-10 py-10 sm:py-14">
+        <div>
+          {crumbs.length > 0 && <Breadcrumbs crumbs={crumbs} />}
+          <h1 className="heading mt-3 sm:text-5xl">{title}</h1>
+          {description && <p className="mt-3 max-w-2xl text-muted">{description}</p>}
+        </div>
+        {aside && <div className="hidden shrink-0 md:block">{aside}</div>}
       </div>
     </div>
   );
