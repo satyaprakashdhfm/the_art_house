@@ -41,7 +41,7 @@ export default async function Home() {
           ].map((c) => (
             <Link key={c.name} href={c.href} className="group text-center">
               <div className="relative mx-auto aspect-square w-full overflow-hidden rounded-full bg-line">
-                <Image src={c.image} alt={c.name} fill sizes="(min-width: 640px) 16vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                <Image src={c.image} alt={c.name} fill quality={90} sizes="(min-width: 640px) 16vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-110" />
               </div>
               <p className="mt-3 text-sm group-hover:text-gold">{c.name}</p>
             </Link>

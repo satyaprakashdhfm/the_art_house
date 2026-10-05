@@ -2,6 +2,8 @@ import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
   images: {
+    // 75 is the default; 90 keeps fine brushwork sharp on small artwork tiles.
+    qualities: [75, 90],
     remotePatterns: [
       // Images uploaded from /admin (Supabase Storage)
       { protocol: "https", hostname: "*.supabase.co", pathname: "/storage/v1/object/public/**" },
