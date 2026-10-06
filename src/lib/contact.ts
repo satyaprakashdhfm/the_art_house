@@ -5,7 +5,7 @@ const WHATSAPP_NUMBER = "918790284586";
 export const EMAIL = "info@veronaarts.com";
 
 /** Person customers can call directly (shown on the About page). Add a name to show it. */
-export const CONTACT_PERSON = { name: "", role: "Customer care", phone: "+91 93815 02998", tel: "+919381502998" };
+export const CONTACT_PERSON = { name: "Satya Prakash Reddy", role: "Customer care", phone: "+91 93815 02998", tel: "+919381502998" };
 
 /** wa.me link that opens a chat, optionally with a pre-filled message. */
 export function whatsappLink(text?: string) {
