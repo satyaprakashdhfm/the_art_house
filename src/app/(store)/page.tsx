@@ -6,7 +6,7 @@ import Newsletter from "@/components/home/Newsletter";
 import ProductGrid from "@/components/product/ProductGrid";
 import ProductCard from "@/components/product/ProductCard";
 import SectionHeading from "@/components/ui/SectionHeading";
-import { ROOM_LABELS, SUBJECT_GROUPS } from "@/lib/labels";
+import { SUBJECT_GROUPS } from "@/lib/labels";
 import { getCatalog } from "@/lib/site-data";
 import { placeholder } from "@/lib/images";
 import { BASE_PRICES } from "@/data/pricing";
@@ -113,20 +113,29 @@ export default async function Home() {
       </section>
 
       {/* Custom art banner */}
-      <section className="bg-card">
-        <div className="container-page grid items-center gap-10 py-16 lg:grid-cols-2">
-          <div className="relative aspect-[4/3] overflow-hidden bg-line">
-            <Image src={placeholder("custom-banner", 1200, 900)} alt="Custom portrait being painted" fill sizes="(min-width: 1024px) 50vw, 100vw" className="object-cover" />
+      <section className="container-page">
+        <div className="grid items-center overflow-hidden bg-ink text-paper lg:grid-cols-2">
+          <div className="flex items-center bg-[#f6eada] px-4 py-6 lg:order-2 lg:h-full">
+            <Image
+              src="/images/custom/hero.jpg"
+              alt="A photo of a golden retriever beside the hand-painted portrait made from it"
+              width={1800}
+              height={662}
+              sizes="(min-width: 1024px) 50vw, 100vw"
+              className="h-auto w-full [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent),linear-gradient(to_bottom,transparent,black_6%,black_94%,transparent)] [mask-composite:intersect]"
+            />
           </div>
-          <div>
+          <div className="px-6 py-10 sm:px-10 lg:px-14">
             <p className="eyebrow">Custom Art</p>
-            <h2 className="heading mt-2">Turn your favourite photo into a painting</h2>
-            <p className="mt-4 text-muted">Portraits, couples, pets and places — painted by hand in the medium and size you choose.</p>
+            <h2 className="mt-3 font-serif text-3xl leading-tight sm:text-4xl">Turn your favourite photo into a painting</h2>
+            <p className="mt-4 text-sm leading-relaxed text-paper/75 sm:text-base">
+              Portraits, couples, pets and places — painted by hand in the medium and size you choose.
+            </p>
             <ol className="mt-8 grid grid-cols-3 gap-4 text-center">
               {["Upload your photo", "Approve a free preview", "Delivered to your door"].map((step, i) => (
                 <li key={step}>
                   <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-gold font-serif text-gold">{i + 1}</span>
-                  <p className="mt-3 text-xs">{step}</p>
+                  <p className="mt-3 text-xs text-paper/85">{step}</p>
                 </li>
               ))}
             </ol>
@@ -141,21 +150,6 @@ export default async function Home() {
       <section className="container-page py-20">
         <SectionHeading eyebrow="Just in" title="New Arrivals" link={{ href: "/shop?sort=newest", label: "View all" }} />
         <ProductGrid products={newArrivals} />
-      </section>
-
-      {/* Shop by room */}
-      <section className="container-page pb-20">
-        <SectionHeading eyebrow="Find the right fit" title="Shop by Room" />
-        <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
-          {Object.entries(ROOM_LABELS).map(([key, label]) => (
-            <Link key={key} href={`/shop?room=${key}`} className="group">
-              <div className="relative aspect-[4/5] overflow-hidden bg-line">
-                <Image src={placeholder(`room-${key}`, 700, 900)} alt={label} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover transition-transform duration-500 group-hover:scale-105" />
-              </div>
-              <p className="mt-3 text-sm group-hover:text-gold">{label}</p>
-            </Link>
-          ))}
-        </div>
       </section>
 
       {/* Testimonials */}
