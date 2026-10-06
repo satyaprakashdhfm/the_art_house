@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Camera, Palette, Star, Truck } from "lucide-react";
 import Hero from "@/components/home/Hero";
 import CustomArtCollage from "@/components/home/CustomArtCollage";
+import CustomArtDecor from "@/components/home/CustomArtDecor";
 import Newsletter from "@/components/home/Newsletter";
 import ProductGrid from "@/components/product/ProductGrid";
 import ProductCard from "@/components/product/ProductCard";
@@ -121,11 +122,12 @@ export default async function Home() {
       {/* Custom art banner */}
       <section className="container-page">
         {/* One green field, deep on the text side and brighter towards the paintings */}
-        <div className="grid items-center overflow-hidden bg-ink bg-[radial-gradient(90%_120%_at_100%_50%,rgba(134,178,140,0.38),transparent_65%),linear-gradient(90deg,#1f3d2b_0%,#1f3d2b_30%,#2b5139_65%,#3a6a4c_100%)] text-paper lg:grid-cols-2">
-          <div className="self-stretch lg:order-2">
+        <div className="grid items-center overflow-hidden bg-ink bg-[radial-gradient(90%_120%_at_100%_50%,rgba(134,178,140,0.38),transparent_65%),linear-gradient(90deg,#1f3d2b_0%,#1f3d2b_30%,#2b5139_65%,#3a6a4c_100%)] text-paper lg:grid-cols-2 relative">
+          <CustomArtDecor />
+          <div className="relative self-stretch lg:order-2">
             <CustomArtCollage />
           </div>
-          <div className="px-6 py-10 sm:px-10 lg:px-14">
+          <div className="relative px-6 py-10 sm:px-10 lg:px-14">
             <p className="eyebrow">Custom Art</p>
             <h2 className="mt-3 font-serif text-3xl leading-tight sm:text-4xl">Turn your favourite photo into a painting</h2>
             <p className="mt-4 text-sm leading-relaxed text-paper/75 sm:text-base">

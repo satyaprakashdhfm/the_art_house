@@ -18,7 +18,7 @@ export default function CustomArtCollage() {
       {PRINTS.map((p) => (
         <figure
           key={p.src}
-          className={`absolute bg-white p-[1.2%] pb-[3.5%] shadow-[0_14px_30px_-10px_rgba(0,0,0,0.55)] transition-[transform,box-shadow] duration-500 ease-out hover:z-40 hover:-translate-y-3 hover:scale-[1.15] hover:rotate-0 hover:shadow-[0_28px_50px_-12px_rgba(0,0,0,0.7)] motion-reduce:transition-none ${p.pos}`}
+          className={`absolute bg-white p-[1.2%] pb-[3.5%] shadow-[0_14px_30px_-10px_rgba(0,0,0,0.55)] transition-[transform,box-shadow] duration-[1100ms] ease-[cubic-bezier(0.25,0.8,0.25,1)] will-change-transform hover:z-40 hover:-translate-y-2 hover:scale-[1.12] hover:rotate-0 hover:shadow-[0_28px_50px_-12px_rgba(0,0,0,0.7)] motion-reduce:transition-none ${p.pos}`}
         >
           <div className="relative w-full" style={{ aspectRatio: `${p.w} / ${p.h}` }}>
             <Image src={p.src} alt={p.alt} fill quality={90} sizes="(min-width: 1024px) 28vw, 55vw" className="object-cover" />
