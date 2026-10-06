@@ -106,14 +106,16 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
               {subName} · {MEDIUM_LABELS[product.medium]}
             </p>
             <h1 className="mt-2 font-serif text-3xl sm:text-4xl">{product.title}</h1>
-            <div className="mt-3 flex items-center gap-2 text-sm text-muted">
-              <span className="flex items-center gap-1 text-ink">
-                <Star className="h-4 w-4 fill-gold text-gold" /> {product.rating}
-              </span>
-              <a href="#reviews" className="underline underline-offset-4">
-                {product.reviewCount} reviews
-              </a>
-            </div>
+            {product.reviewCount > 0 && (
+              <div className="mt-3 flex items-center gap-2 text-sm text-muted">
+                <span className="flex items-center gap-1 text-ink">
+                  <Star className="h-4 w-4 fill-gold text-gold" /> {product.rating}
+                </span>
+                <a href="#reviews" className="underline underline-offset-4">
+                  {product.reviewCount} reviews
+                </a>
+              </div>
+            )}
             {coupons.length > 0 && (
               <div className="mt-4 flex flex-wrap gap-2">
                 {coupons.map((c) => (
@@ -155,7 +157,7 @@ export default async function ProductPage({ params }: PageProps<"/product/[slug]
         </div>
       </div>
 
-      {reviews.length > 0 && (
+      {reviews.length > 0 && product.reviewCount > 0 && (
         <section id="reviews" className="container-page mt-16 scroll-mt-28">
           <SectionHeading eyebrow="Reviews" title={`${product.rating} out of 5`} description={`Based on ${product.reviewCount} reviews`} />
           <div className="grid gap-6 md:grid-cols-3">

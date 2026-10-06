@@ -43,9 +43,11 @@ export default function ProductCard({ product, priority }: { product: Product; p
               {single ? "" : "From "}
               {formatINR(from)}
             </p>
-            <p className="flex items-center gap-1 text-xs text-muted">
-              <Star className="h-3 w-3 fill-gold text-gold" /> {product.rating}
-            </p>
+            {product.reviewCount > 0 && (
+              <p className="flex items-center gap-1 text-xs text-muted">
+                <Star className="h-3 w-3 fill-gold text-gold" /> {product.rating}
+              </p>
+            )}
           </div>
         </div>
       </Link>
