@@ -1,8 +1,9 @@
 "use client";
 
 import { useCallback, useEffect, useState } from "react";
+import { createPortal } from "react-dom";
 import Image from "next/image";
-import { ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, Maximize2, X } from "lucide-react";
 
 const LABELS = ["Artwork", "Close-up detail", "View in room"];
 
@@ -23,12 +24,26 @@ function Lightbox({ images, index, title, onClose, onMove }: { images: string[];
   }, [onClose, onMove]);
 
   const arrow = "absolute top-1/2 z-10 -translate-y-1/2 rounded-full bg-white/10 p-2 text-white transition-colors hover:bg-white/25";
-  return (
-    <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[70] bg-black/90" onClick={onClose}>
-      <button type="button" onClick={onClose} aria-label="Close" className="absolute top-4 right-4 z-10 p-2 text-white/80 hover:text-white">
-        <X className="h-6 w-6" />
-      </button>
-      <div className="absolute inset-4 sm:inset-12" onClick={(e) => e.stopPropagation()}>
+  // Portal to <body>: inside the sticky gallery column the viewer would sit under the site header.
+  return createPortal(
+    <div role="dialog" aria-modal="true" aria-label={title} className="fixed inset-0 z-[70] bg-black/95 backdrop-blur-sm" onClick={onClose}>
+      <div className="absolute inset-x-0 top-0 z-10 flex items-center justify-between gap-4 px-3 py-3 text-white sm:px-6" onClick={(e) => e.stopPropagation()}>
+        <button
+          type="button"
+          onClick={onClose}
+          className="flex items-center gap-2 rounded-full bg-white/10 py-2 pr-4 pl-3 text-sm transition-colors hover:bg-white/25"
+        >
+          <ArrowLeft className="h-4 w-4" /> Back
+        </button>
+        <p className="min-w-0 truncate text-center text-sm text-white/80">
+          {title}
+          {images.length > 1 && <span className="text-white/50"> · {index + 1} / {images.length}</span>}
+        </p>
+        <button type="button" onClick={onClose} aria-label="Close" className="rounded-full p-2 text-white/80 transition-colors hover:bg-white/10 hover:text-white">
+          <X className="h-6 w-6" />
+        </button>
+      </div>
+      <div className="absolute inset-x-4 top-16 bottom-4 sm:inset-x-12 sm:bottom-10" onClick={(e) => e.stopPropagation()}>
         <Image src={images[index]} alt={title} fill sizes="100vw" quality={90} className="object-contain" />
       </div>
       {images.length > 1 && (
@@ -41,7 +56,8 @@ function Lightbox({ images, index, title, onClose, onMove }: { images: string[];
           </button>
         </>
       )}
-    </div>
+    </div>,
+    document.body,
   );
 }
 
@@ -55,7 +71,21 @@ export default function ProductGallery({ images, title }: { images: string[]; ti
 
   const count = images.length;
   const move = useCallback((dir: -1 | 1) => setActive((i) => (i + dir + count) % count), [count]);
-  const close = useCallback(() => setFull(false), []);
+  // Opening adds a history entry, so the phone/browser Back button closes the viewer instead of leaving the page.
+  const open = useCallback(() => {
+    window.history.pushState({ ...window.history.state, lightbox: true }, "");
+    setFull(true);
+  }, []);
+  const close = useCallback(() => {
+    if (window.history.state?.lightbox) window.history.back();
+    else setFull(false);
+  }, []);
+  useEffect(() => {
+    if (!full) return;
+    const onPop = () => setFull(false);
+    window.addEventListener("popstate", onPop);
+    return () => window.removeEventListener("popstate", onPop);
+  }, [full]);
 
   return (
     // self-start: don't stretch to the height of the details column beside it.
@@ -86,7 +116,7 @@ export default function ProductGallery({ images, title }: { images: string[]; ti
             setZoom({ x: ((e.clientX - r.left) / r.width) * 100, y: ((e.clientY - r.top) / r.height) * 100 });
           }}
           onMouseLeave={() => setZoom(null)}
-          onClick={() => setFull(true)}
+          onClick={open}
         >
           <Image
             src={images[active]}
@@ -106,7 +136,7 @@ export default function ProductGallery({ images, title }: { images: string[]; ti
         </div>
         <button
           type="button"
-          onClick={() => setFull(true)}
+          onClick={open}
           aria-label="View full screen"
           className="absolute top-3 right-3 flex h-9 w-9 items-center justify-center rounded-full bg-paper/90 text-ink shadow transition-colors hover:bg-paper hover:text-gold"
         >
