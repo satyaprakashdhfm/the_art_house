@@ -3,7 +3,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { ArrowRight, Gem, Heart, Leaf, Mail, Phone, UserRound } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/PageHeader";
-import { CONTACT_PERSON, EMAIL } from "@/lib/contact";
+import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
+import { CONTACT_PERSON, EMAIL, whatsappLink } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "About",
@@ -76,7 +77,7 @@ export default function AboutPage() {
               <p className="eyebrow">Contact person</p>
               <h2 className="mt-2 font-serif text-3xl">{CONTACT_PERSON.name || "Talk to us directly"}</h2>
               <p className="mt-1 text-sm text-muted">
-                {CONTACT_PERSON.name ? `${CONTACT_PERSON.role} · ` : ""}Questions about an artwork, an order or a custom piece? Give us a call.
+                {CONTACT_PERSON.name ? `${CONTACT_PERSON.role} · ` : ""}Questions about an artwork, an order or a custom piece? Call or WhatsApp me.
               </p>
               <div className="mt-4 flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:gap-x-6 md:justify-start">
                 <a href={`tel:${CONTACT_PERSON.tel}`} className="inline-flex items-center justify-center gap-2 font-medium hover:text-gold md:justify-start">
@@ -87,9 +88,19 @@ export default function AboutPage() {
                 </a>
               </div>
             </div>
-            <a href={`tel:${CONTACT_PERSON.tel}`} className="btn-primary shrink-0">
-              <Phone className="h-4 w-4" /> Call now
-            </a>
+            <div className="flex w-full shrink-0 flex-col gap-3 sm:w-auto">
+              <a href={`tel:${CONTACT_PERSON.tel}`} className="btn-primary">
+                <Phone className="h-4 w-4" /> Call now
+              </a>
+              <a
+                href={whatsappLink(`Hi ${CONTACT_PERSON.name.split(" ")[0]}, I have a question about Verona Arts.`, CONTACT_PERSON.whatsapp)}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="btn bg-[#25d366] text-white hover:bg-[#1ebe5b]"
+              >
+                <WhatsAppIcon className="h-4 w-4" /> WhatsApp
+              </a>
+            </div>
           </div>
         </div>
       </section>
