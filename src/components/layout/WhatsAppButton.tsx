@@ -17,14 +17,14 @@ export default function WhatsAppButton() {
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"
-      className="group fixed right-4 bottom-4 z-40 flex h-12 w-12 items-center justify-center sm:right-6 sm:bottom-6 sm:h-13 sm:w-13"
+      className="group fixed right-4 bottom-4 z-40 flex h-11 w-11 items-center justify-center sm:right-6 sm:bottom-6 sm:h-12 sm:w-12"
     >
       {/* Ripple rings */}
       <span aria-hidden="true" className="absolute inset-0 animate-ripple rounded-full bg-[#25d366] motion-reduce:hidden" />
       <span aria-hidden="true" className="absolute inset-0 animate-ripple rounded-full bg-[#25d366] [animation-delay:1.2s] motion-reduce:hidden" />
       {/* Button */}
       <span className="relative flex h-full w-full items-center justify-center rounded-full bg-[#25d366] text-white shadow-lg ring-[3px] ring-[#25d366]/25 transition-transform duration-200 group-hover:scale-105">
-        <WhatsAppIcon className="h-6 w-6 sm:h-[26px] sm:w-[26px]" />
+        <WhatsAppIcon className="h-[22px] w-[22px] sm:h-6 sm:w-6" />
       </span>
       {/* Hover label (desktop) */}
       <span className="pointer-events-none absolute right-full mr-3 hidden translate-x-2 rounded-full bg-ink px-3 py-1.5 text-xs whitespace-nowrap text-paper opacity-0 shadow transition-all duration-200 group-hover:translate-x-0 group-hover:opacity-100 md:block">

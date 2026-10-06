@@ -22,10 +22,30 @@ export default function CustomArtDecor() {
         />
       </svg>
 
-      {/* Palette and brushes, between the text and the paintings */}
+      {/* Soft beige paint smear behind the palette */}
+      <svg viewBox="0 0 400 200" className="absolute bottom-[1%] left-[35%] hidden w-[24%] max-w-[320px] -rotate-[16deg] opacity-40 lg:block">
+        <defs>
+          <linearGradient id="smear" x1="0" x2="1">
+            <stop offset="0" stopColor="#e8d7b4" stopOpacity="0" />
+            <stop offset="0.25" stopColor="#e8d7b4" stopOpacity="0.9" />
+            <stop offset="0.8" stopColor="#d9c08f" stopOpacity="0.8" />
+            <stop offset="1" stopColor="#d9c08f" stopOpacity="0" />
+          </linearGradient>
+          <filter id="bristles">
+            <feTurbulence type="fractalNoise" baseFrequency="0.015 0.6" numOctaves="2" seed="4" />
+            <feDisplacementMap in="SourceGraphic" scale="14" />
+          </filter>
+        </defs>
+        <g filter="url(#bristles)" fill="url(#smear)">
+          <path d="M10 120 C 90 70 220 60 390 80 C 300 100 180 120 40 150 Z" />
+          <path d="M30 150 C 120 115 250 105 380 112 C 280 132 170 148 60 170 Z" opacity="0.6" />
+        </g>
+      </svg>
+
+      {/* Palette and brushes: cream line art, between the text and the paintings */}
       <svg
         viewBox="0 0 260 220"
-        className="absolute bottom-[4%] left-[41%] hidden w-[17%] max-w-[230px] -rotate-12 text-gold opacity-60 lg:block"
+        className="absolute bottom-[3%] left-[42%] hidden w-[14%] max-w-[200px] -rotate-12 text-[#f4ecdc] opacity-75 lg:block"
         fill="none"
         stroke="currentColor"
         strokeWidth="1.6"

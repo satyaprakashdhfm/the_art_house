@@ -8,6 +8,7 @@ import Image from "next/image";
 const PRINTS = [
   { src: "/images/custom/collage/waterfall.jpg", alt: "Oil painting of a waterfall in a forest", w: 1600, h: 1011, pos: "left-[5%] top-[7%] w-[47%] -rotate-6 z-10" },
   { src: "/images/custom/collage/dogs.jpg", alt: "Oil painting of two white Spitz dogs", w: 1600, h: 1143, pos: "right-[4%] top-[5%] w-[44%] rotate-[5deg] z-20" },
+  { src: "/images/custom/collage/bacchus.jpg", alt: "Oil painting of Bacchus with a wine glass and fruit", w: 708, h: 820, pos: "left-[3%] bottom-[5%] w-[23%] rotate-[4deg] z-20" },
   { src: "/images/custom/collage/roses.jpg", alt: "Painting of red roses in a blue vase", w: 1278, h: 1600, pos: "left-[30%] top-[38%] w-[27%] -rotate-2 z-30" },
   { src: "/images/custom/collage/sunset.jpg", alt: "Oil painting of a giraffe and tree at sunset", w: 1600, h: 1158, pos: "right-[6%] bottom-[7%] w-[42%] -rotate-[4deg] z-20" },
 ];
