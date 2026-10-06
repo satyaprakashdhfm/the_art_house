@@ -5,6 +5,7 @@ import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
 import SearchOverlay from "@/components/layout/SearchOverlay";
 import MobileMenu from "@/components/layout/MobileMenu";
+import WhatsAppButton from "@/components/layout/WhatsAppButton";
 import { CatalogProvider } from "@/context/catalog";
 import { getSiteData } from "@/lib/site-data";
 
@@ -18,6 +19,7 @@ export default async function StoreShell({ children }: { children: ReactNode }) 
       <Header />
       <main className="flex-1">{children}</main>
       <Footer />
+      <WhatsAppButton />
       <CartDrawer />
       <SearchOverlay />
       <MobileMenu />

@@ -1,9 +1,10 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Mail, MapPin, MessageCircle } from "lucide-react";
+import { Mail, MapPin } from "lucide-react";
 import { getCatalog } from "@/lib/site-data";
 import { SUBJECT_GROUPS } from "@/lib/labels";
-import { WHATSAPP_DISPLAY } from "@/lib/contact";
+import { EMAIL, WHATSAPP_DISPLAY, whatsappLink } from "@/lib/contact";
+import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
 const HELP = [
   { href: "/contact", label: "Contact Us" },
@@ -37,11 +38,15 @@ export default async function Footer() {
             Handmade paintings, pencil sketches and digital art — created with love and delivered across India.
           </p>
           <ul className="mt-5 space-y-2 text-sm text-card/75">
-            <li className="flex items-center gap-2">
-              <MessageCircle className="h-4 w-4 text-gold" /> {WHATSAPP_DISPLAY} (WhatsApp)
+            <li>
+              <a href={whatsappLink()} target="_blank" rel="noopener noreferrer" className="flex items-center gap-2 transition-colors hover:text-gold">
+                <WhatsAppIcon className="h-4 w-4 text-gold" /> {WHATSAPP_DISPLAY} (WhatsApp)
+              </a>
             </li>
-            <li className="flex items-center gap-2">
-              <Mail className="h-4 w-4 text-gold" /> hello@veronaarts.example
+            <li>
+              <a href={`mailto:${EMAIL}`} className="flex items-center gap-2 transition-colors hover:text-gold">
+                <Mail className="h-4 w-4 text-gold" /> {EMAIL}
+              </a>
             </li>
             <li className="flex items-center gap-2">
               <MapPin className="h-4 w-4 text-gold" /> Studio, India
