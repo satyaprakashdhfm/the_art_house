@@ -1,7 +1,8 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Camera, Palette, Star, Truck } from "lucide-react";
 import Hero from "@/components/home/Hero";
+import CustomArtCollage from "@/components/home/CustomArtCollage";
 import Newsletter from "@/components/home/Newsletter";
 import ProductGrid from "@/components/product/ProductGrid";
 import ProductCard from "@/components/product/ProductCard";
@@ -18,6 +19,12 @@ const MEDIUMS = [
   { slug: "acrylic", name: "Acrylic", text: "Bold, vibrant colour" },
   { slug: "digital", name: "Digital", text: "Prints & instant files" },
 ] as const;
+
+const CUSTOM_STEPS = [
+  { icon: Camera, label: "Share your photo" },
+  { icon: Palette, label: "Choose style & size" },
+  { icon: Truck, label: "Delivered to your door" },
+];
 
 export default async function Home() {
   const catalog = await getCatalog();
@@ -114,15 +121,8 @@ export default async function Home() {
       {/* Custom art banner */}
       <section className="container-page">
         <div className="grid items-center overflow-hidden bg-ink text-paper lg:grid-cols-2">
-          <div className="flex items-center bg-[#f6eada] px-4 py-6 lg:order-2 lg:h-full">
-            <Image
-              src="/images/custom/hero.jpg"
-              alt="A photo of a golden retriever beside the hand-painted portrait made from it"
-              width={1800}
-              height={662}
-              sizes="(min-width: 1024px) 50vw, 100vw"
-              className="h-auto w-full [mask-image:linear-gradient(to_right,transparent,black_6%,black_94%,transparent),linear-gradient(to_bottom,transparent,black_6%,black_94%,transparent)] [mask-composite:intersect]"
-            />
+          <div className="self-stretch lg:order-2">
+            <CustomArtCollage />
           </div>
           <div className="px-6 py-10 sm:px-10 lg:px-14">
             <p className="eyebrow">Custom Art</p>
@@ -130,11 +130,11 @@ export default async function Home() {
             <p className="mt-4 text-sm leading-relaxed text-paper/75 sm:text-base">
               Portraits, couples, pets and places — painted by hand in the medium and size you choose.
             </p>
-            <ol className="mt-8 grid grid-cols-3 gap-4 text-center">
-              {["Upload your photo", "Approve a free preview", "Delivered to your door"].map((step, i) => (
-                <li key={step}>
-                  <span className="mx-auto flex h-10 w-10 items-center justify-center rounded-full border border-gold font-serif text-gold">{i + 1}</span>
-                  <p className="mt-3 text-xs text-paper/85">{step}</p>
+            <ol className="mt-8 grid max-w-md grid-cols-3 gap-4 text-center">
+              {CUSTOM_STEPS.map(({ icon: Icon, label }) => (
+                <li key={label}>
+                  <Icon className="mx-auto h-10 w-10 text-gold" strokeWidth={1.5} />
+                  <p className="mx-auto mt-3 max-w-[7.5rem] text-xs leading-snug text-paper/85 sm:text-sm">{label}</p>
                 </li>
               ))}
             </ol>
