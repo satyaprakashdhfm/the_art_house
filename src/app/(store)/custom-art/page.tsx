@@ -51,7 +51,7 @@ export default async function CustomArtPage() {
             preload
             quality={90}
             sizes="(min-width: 1280px) 760px, (min-width: 1024px) 60vw, 100vw"
-            className="h-auto w-full [mask-image:linear-gradient(to_right,transparent,black_10%,black_92%,transparent)]"
+            className="h-auto w-full [mask-image:linear-gradient(to_right,transparent,black_10%,black_92%,transparent),linear-gradient(to_bottom,transparent,black_5%,black_96%,transparent)] [mask-composite:intersect]"
           />
         </div>
       </section>
