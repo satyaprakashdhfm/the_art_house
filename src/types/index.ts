@@ -1,5 +1,5 @@
 export type Medium = "pencil" | "oil" | "acrylic" | "digital";
-export type Style = "abstract" | "modern" | "traditional" | "wall-art";
+export type Style = "abstract" | "modern" | "traditional" | "wall-art" | "madhubani";
 export type ProductType = "original" | "made-to-order" | "print";
 export type Orientation = "portrait" | "landscape" | "square";
 export type Room = "living" | "pooja" | "bedroom" | "office";

@@ -34,14 +34,15 @@ export default async function Home() {
       {/* Shop by category */}
       <section className="container-page py-20">
         <SectionHeading eyebrow="Explore" title="Shop by Category" link={{ href: "/categories", label: "All categories" }} />
-        <div className="grid grid-cols-3 gap-4 sm:grid-cols-6">
+        <div className="flex flex-wrap justify-center gap-x-[5%] gap-y-6 sm:flex-nowrap sm:justify-between sm:gap-4">
           {[...subjectGroups.map((g) => ({ href: `/categories#${g.slug}`, name: g.name, image: g.image })),
             { href: "/categories/art-style/abstract", name: "Abstract", image: subImage("art-style", "abstract", placeholder("sub-abstract", 600, 600)) },
             { href: "/categories/art-style/wall-art", name: "Wall Art", image: subImage("art-style", "wall-art", placeholder("sub-wall-art", 600, 600)) },
+            { href: "/categories/art-style/madhubani", name: "Madhubani", image: subImage("art-style", "madhubani", "/images/categories/madhubani.jpg") },
           ].map((c) => (
-            <Link key={c.name} href={c.href} className="group text-center">
+            <Link key={c.name} href={c.href} className="group w-[30%] text-center sm:w-auto sm:flex-1">
               <div className="relative mx-auto aspect-square w-full overflow-hidden rounded-full bg-line">
-                <Image src={c.image} alt={c.name} fill quality={90} sizes="(min-width: 640px) 16vw, 33vw" className="object-cover transition-transform duration-500 group-hover:scale-110" />
+                <Image src={c.image} alt={c.name} fill quality={90} sizes="(min-width: 640px) 14vw, 30vw" className="object-cover transition-transform duration-500 group-hover:scale-110" />
               </div>
               <p className="mt-3 text-sm group-hover:text-gold">{c.name}</p>
             </Link>
@@ -64,6 +65,38 @@ export default async function Home() {
               </div>
             </Link>
           ))}
+        </div>
+      </section>
+
+      {/* Madhubani feature */}
+      <section className="container-page pt-20">
+        <div className="grid items-center overflow-hidden bg-ink text-paper md:grid-cols-[minmax(0,1fr)_minmax(0,2fr)]">
+          <div className="relative aspect-[4/3] md:aspect-square md:h-full">
+            <Image
+              src={subImage("art-style", "madhubani", "/images/categories/madhubani.jpg")}
+              alt="Madhubani painting of a fish pair around a lotus"
+              fill
+              quality={90}
+              sizes="(min-width: 768px) 33vw, 100vw"
+              className="object-cover"
+            />
+          </div>
+          <div className="px-6 py-10 sm:px-10 lg:px-14">
+            <p className="eyebrow">Folk art of Mithila, Bihar</p>
+            <h2 className="mt-3 font-serif text-3xl leading-tight sm:text-4xl">The Madhubani Collection</h2>
+            <p className="mt-4 max-w-xl text-sm leading-relaxed text-paper/75 sm:text-base">
+              Hand-painted in a centuries-old tradition — bold colours, fine line-work and timeless motifs of fish,
+              peacocks and lotus, each a symbol of luck, love and new beginnings.
+            </p>
+            <div className="mt-8 flex flex-wrap gap-3">
+              <Link href="/categories/art-style/madhubani" className="btn-primary">
+                Explore Madhubani
+              </Link>
+              <Link href="/custom-art" className="btn border border-paper/40 text-paper hover:border-gold hover:bg-gold">
+                Commission a piece
+              </Link>
+            </div>
+          </div>
         </div>
       </section>
 

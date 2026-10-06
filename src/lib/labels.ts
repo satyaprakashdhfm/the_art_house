@@ -12,6 +12,7 @@ export const STYLE_LABELS = {
   modern: "Modern",
   traditional: "Traditional",
   "wall-art": "Wall Art",
+  madhubani: "Madhubani",
 } as const;
 
 export const TYPE_LABELS = {

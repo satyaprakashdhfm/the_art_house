@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { SlidersHorizontal, X } from "lucide-react";
 import ProductGrid from "@/components/product/ProductGrid";
@@ -199,7 +200,23 @@ export default function ShopView({ locked = {} }: { locked?: LockedFilters }) {
         )}
       </div>
 
-      {products.length === 0 ? (
+      {products.length === 0 && activeCount === 0 ? (
+        // Nothing in this collection yet (e.g. a newly added category page).
+        <div className="border border-dashed border-line px-6 py-20 text-center">
+          <p className="font-serif text-2xl">New pieces are on their way</p>
+          <p className="mx-auto mt-2 max-w-md text-sm text-muted">
+            We&apos;re adding artworks to this collection soon. Want one now? We&apos;ll paint it for you.
+          </p>
+          <div className="mt-6 flex flex-wrap justify-center gap-3">
+            <Link href="/custom-art" className="btn-primary">
+              Commission a piece
+            </Link>
+            <Link href="/shop" className="btn-outline">
+              Browse all artworks
+            </Link>
+          </div>
+        </div>
+      ) : products.length === 0 ? (
         <div className="border border-dashed border-line py-20 text-center">
           <p className="font-serif text-xl">No artworks match these filters</p>
           <button type="button" onClick={clearAll} className="btn-outline mt-6">
