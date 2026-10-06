@@ -28,11 +28,13 @@ Open http://localhost:3000. The admin dashboard is at http://localhost:3000/admi
 
 1. In [Google Cloud Console → Clients](https://console.cloud.google.com/auth/clients/create), create an OAuth client
    of type **Web application**.
-   - Authorized JavaScript origins: `http://localhost:3000` and your live site URL.
+   - Authorized JavaScript origins: `http://localhost:3000` and `https://www.veronaarts.com`.
    - Authorized redirect URI: `https://wkvjoztjwturtlwbnwdh.supabase.co/auth/v1/callback`
 2. In Supabase → Authentication → Sign In / Providers → **Google**: enable it and paste the Client ID and Client Secret.
-3. In Supabase → Authentication → URL Configuration: set **Site URL** to your live site, and add
-   `http://localhost:3000/auth/callback` and `https://<your-site>/auth/callback` to **Redirect URLs**.
+3. In Supabase → Authentication → URL Configuration: set **Site URL** to `https://www.veronaarts.com`, and add these
+   **Redirect URLs**: `https://www.veronaarts.com/**`, `http://localhost:3000/**` and
+   `https://the-art-house-*-satyaprakashreddy6789-1469s-projects.vercel.app/**` (Vercel previews).
+   A sign-in that returns to an address not on this list is sent to the Site URL instead.
 
 ### Admins
 
