@@ -1,8 +1,9 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowRight, Gem, Heart, Leaf } from "lucide-react";
+import { ArrowRight, Gem, Heart, Leaf, Mail, Phone, UserRound } from "lucide-react";
 import { Breadcrumbs } from "@/components/ui/PageHeader";
+import { CONTACT_PERSON, EMAIL } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "About",
@@ -60,6 +61,35 @@ export default function AboutPage() {
                 <p className="mx-auto mt-2 max-w-60 leading-relaxed text-muted">{text}</p>
               </div>
             ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Contact person */}
+      <section className="bg-paper">
+        <div className="container-page py-14">
+          <div className="mx-auto flex max-w-4xl flex-col items-center gap-8 border border-line bg-card px-6 py-10 text-center sm:px-10 md:flex-row md:text-left">
+            <span className="flex h-20 w-20 shrink-0 items-center justify-center rounded-full border border-gold/50 bg-paper text-gold">
+              <UserRound className="h-9 w-9" strokeWidth={1.25} />
+            </span>
+            <div className="flex-1">
+              <p className="eyebrow">Contact person</p>
+              <h2 className="mt-2 font-serif text-3xl">{CONTACT_PERSON.name || "Talk to us directly"}</h2>
+              <p className="mt-1 text-sm text-muted">
+                {CONTACT_PERSON.name ? `${CONTACT_PERSON.role} · ` : ""}Questions about an artwork, an order or a custom piece? Give us a call.
+              </p>
+              <div className="mt-4 flex flex-col gap-2 text-sm sm:flex-row sm:flex-wrap sm:gap-x-6 md:justify-start">
+                <a href={`tel:${CONTACT_PERSON.tel}`} className="inline-flex items-center justify-center gap-2 font-medium hover:text-gold md:justify-start">
+                  <Phone className="h-4 w-4 text-gold" /> {CONTACT_PERSON.phone}
+                </a>
+                <a href={`mailto:${EMAIL}`} className="inline-flex items-center justify-center gap-2 text-muted hover:text-gold md:justify-start">
+                  <Mail className="h-4 w-4 text-gold" /> {EMAIL}
+                </a>
+              </div>
+            </div>
+            <a href={`tel:${CONTACT_PERSON.tel}`} className="btn-primary shrink-0">
+              <Phone className="h-4 w-4" /> Call now
+            </a>
           </div>
         </div>
       </section>
