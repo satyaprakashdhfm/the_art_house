@@ -120,7 +120,8 @@ export default async function Home() {
 
       {/* Custom art banner */}
       <section className="container-page">
-        <div className="grid items-center overflow-hidden bg-ink text-paper lg:grid-cols-2">
+        {/* One green field, deep on the text side and brighter towards the paintings */}
+        <div className="grid items-center overflow-hidden bg-ink bg-[radial-gradient(90%_120%_at_100%_50%,rgba(134,178,140,0.38),transparent_65%),linear-gradient(90deg,#1f3d2b_0%,#1f3d2b_30%,#2b5139_65%,#3a6a4c_100%)] text-paper lg:grid-cols-2">
           <div className="self-stretch lg:order-2">
             <CustomArtCollage />
           </div>
