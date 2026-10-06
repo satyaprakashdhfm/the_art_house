@@ -4,7 +4,7 @@ import { Clock, Mail, MapPin } from "lucide-react";
 import PageHeader from "@/components/ui/PageHeader";
 import ContactForm from "@/components/ui/ContactForm";
 import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
-import { EMAIL, WHATSAPP_DISPLAY, whatsappLink } from "@/lib/contact";
+import { EMAIL, LOCATION, WHATSAPP_DISPLAY, whatsappLink } from "@/lib/contact";
 
 export const metadata: Metadata = {
   title: "Contact",
@@ -14,7 +14,7 @@ export const metadata: Metadata = {
 const DETAILS: { icon: ComponentType<{ className?: string }>; title: string; text: string; href?: string }[] = [
   { icon: WhatsAppIcon, title: "WhatsApp", text: WHATSAPP_DISPLAY, href: whatsappLink() },
   { icon: Mail, title: "Email", text: EMAIL, href: `mailto:${EMAIL}` },
-  { icon: MapPin, title: "Studio", text: "Studio address, India" },
+  { icon: MapPin, title: "Studio", text: LOCATION },
   { icon: Clock, title: "Hours", text: "Mon – Sat, 10am – 7pm IST" },
 ];
 

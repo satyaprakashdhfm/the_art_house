@@ -3,6 +3,7 @@ export const WHATSAPP_DISPLAY = "+91 87902 84586";
 const WHATSAPP_NUMBER = "918790284586";
 
 export const EMAIL = "info@veronaarts.com";
+export const LOCATION = "Hyderabad, India";
 
 /** Person customers can call or WhatsApp directly (shown on the About page). */
 export const CONTACT_PERSON = {

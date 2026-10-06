@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Mail, MapPin } from "lucide-react";
 import { getCatalog } from "@/lib/site-data";
 import { SUBJECT_GROUPS } from "@/lib/labels";
-import { EMAIL, WHATSAPP_DISPLAY, whatsappLink } from "@/lib/contact";
+import { EMAIL, LOCATION, WHATSAPP_DISPLAY, whatsappLink } from "@/lib/contact";
 import WhatsAppIcon from "@/components/ui/WhatsAppIcon";
 
 const HELP = [
@@ -49,7 +49,7 @@ export default async function Footer() {
               </a>
             </li>
             <li className="flex items-center gap-2">
-              <MapPin className="h-4 w-4 text-gold" /> Studio, India
+              <MapPin className="h-4 w-4 text-gold" /> {LOCATION}
             </li>
           </ul>
         </div>
