@@ -24,7 +24,7 @@ export default async function Footer() {
 
   return (
     <footer className="mt-24 bg-ink text-card">
-      <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="container-page grid gap-10 pt-8 pb-8 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
           <Image
             src="/images/brand/emblem-light.png"
@@ -116,9 +116,9 @@ export default async function Footer() {
         </div>
       </div>
       <div className="border-t border-card/15">
-        <div className="container-page flex flex-col gap-2 py-5 text-xs text-card/60 sm:flex-row sm:justify-between">
+        <div className="container-page flex flex-col gap-2 py-4 text-xs text-card/60 sm:flex-row sm:items-center sm:justify-between">
           <p>© {new Date().getFullYear()} Verona Arts. All rights reserved.</p>
-          <p>Instagram · Facebook · Pinterest · YouTube</p>
+          <p className="font-serif text-sm text-card/75 italic">Every brushstroke made by hand, to be treasured for a lifetime.</p>
         </div>
       </div>
     </footer>
