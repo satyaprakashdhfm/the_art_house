@@ -82,8 +82,7 @@ export default async function Home() {
             />
           </div>
           <div className="px-6 py-10 sm:px-10 lg:px-14">
-            <p className="eyebrow">Folk art of Mithila, Bihar</p>
-            <h2 className="mt-3 font-serif text-3xl leading-tight sm:text-4xl">The Madhubani Collection</h2>
+            <h2 className="font-serif text-3xl leading-tight sm:text-4xl">The Madhubani Collection</h2>
             <p className="mt-4 max-w-xl text-sm leading-relaxed text-paper/75 sm:text-base">
               Hand-painted in a centuries-old tradition — bold colours, fine line-work and timeless motifs of fish,
               peacocks and lotus, each a symbol of luck, love and new beginnings.
