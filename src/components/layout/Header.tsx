@@ -46,13 +46,13 @@ export default function Header() {
           </button>
           <Link href="/" className="flex shrink-0 items-center" aria-label="Verona Arts — home">
             <Image
-              src="/images/logo.png"
+              src="/images/brand/emblem.png"
               alt="Verona Arts"
-              width={1241}
-              height={581}
+              width={1261}
+              height={1072}
               preload
-              sizes="(min-width: 1024px) 164px, 128px"
-              className="h-[60px] w-auto lg:h-[76px]"
+              sizes="(min-width: 1024px) 104px, 85px"
+              className="h-[72px] w-auto lg:h-[88px]"
             />
           </Link>
         </div>

@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Mail, MapPin, MessageCircle } from "lucide-react";
 import { getCatalog } from "@/lib/site-data";
@@ -24,10 +25,14 @@ export default async function Footer() {
     <footer className="mt-24 bg-ink text-card">
       <div className="container-page grid gap-10 py-14 sm:grid-cols-2 lg:grid-cols-5">
         <div className="lg:col-span-2">
-          <p className="font-serif text-3xl leading-none">
-            Verona
-            <span className="mt-1.5 block font-sans text-sm font-medium tracking-[0.45em] text-gold uppercase">Arts</span>
-          </p>
+          <Image
+            src="/images/brand/emblem-light.png"
+            alt="Verona Arts"
+            width={1261}
+            height={1072}
+            sizes="170px"
+            className="h-36 w-auto"
+          />
           <p className="mt-4 max-w-sm text-sm leading-relaxed text-card/75">
             Handmade paintings, pencil sketches and digital art — created with love and delivered across India.
           </p>

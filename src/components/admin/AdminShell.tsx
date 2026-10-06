@@ -44,9 +44,13 @@ export default function AdminShell({ user, children }: { user: SessionUser; chil
     <div className="flex h-full flex-col bg-ink text-card">
       <div className="flex items-start gap-2 px-4 pt-5 pb-4">
         <Link href="/admin" className="block flex-1">
-          <span className="flex items-center justify-center rounded-md bg-paper px-4 py-3">
-            <Image src="/images/logo.png" alt="Verona Arts" width={1241} height={581} className="h-16 w-auto" />
-          </span>
+          <Image
+            src="/images/brand/emblem-light.png"
+            alt="Verona Arts"
+            width={1261}
+            height={1072}
+            className="mx-auto h-28 w-auto"
+          />
           <span className="mt-3 block text-center text-[11px] font-medium tracking-[0.3em] text-gold uppercase">Admin dashboard</span>
         </Link>
         <button type="button" onClick={() => setOpen(false)} className="p-1 lg:hidden" aria-label="Close menu">

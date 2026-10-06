@@ -20,7 +20,7 @@ export default async function AdminLayout({ children }: LayoutProps<"/admin">) {
     return (
       <main className="flex min-h-screen items-center justify-center bg-card p-4">
         <div className="w-full max-w-md border border-line bg-paper p-10 text-center shadow-sm">
-          <Image src="/images/logo.png" alt="Verona Arts" width={1241} height={581} className="mx-auto h-16 w-auto" />
+          <Image src="/images/brand/emblem.png" alt="Verona Arts" width={1261} height={1072} className="mx-auto h-28 w-auto" />
           <span className="mx-auto mt-8 flex h-12 w-12 items-center justify-center rounded-full bg-sale/10 text-sale">
             <ShieldAlert className="h-6 w-6" />
           </span>

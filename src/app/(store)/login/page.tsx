@@ -27,7 +27,7 @@ export default async function LoginPage({ searchParams }: PageProps<"/login">) {
     <section className="bg-card py-16 sm:py-24">
       <div className="container-page flex justify-center">
         <div className="w-full max-w-md border border-line bg-paper p-8 shadow-sm sm:p-10">
-          <Image src="/images/logo.png" alt="Verona Arts" width={1241} height={581} className="mx-auto h-20 w-auto" />
+          <Image src="/images/brand/emblem.png" alt="Verona Arts" width={1261} height={1072} className="mx-auto h-36 w-auto" />
 
           {user ? (
             <div className="mt-8 text-center">
