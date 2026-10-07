@@ -4,7 +4,8 @@ import { Suspense } from "react";
 import { notFound } from "next/navigation";
 import PageHeader from "@/components/ui/PageHeader";
 import ShopView, { type LockedFilters } from "@/components/shop/ShopView";
-import { getCatalog } from "@/lib/site-data";
+import SoldWorks from "@/components/gallery/SoldWorks";
+import { getCatalog, getGallery } from "@/lib/site-data";
 import { subHref } from "@/components/layout/nav";
 
 export async function generateStaticParams() {
@@ -30,10 +31,15 @@ function lockedFor(group: string, sub: string): LockedFilters {
 
 export default async function SubCategoryPage({ params }: PageProps<"/categories/[group]/[sub]">) {
   const { group, sub } = await params;
-  const catalog = await getCatalog();
+  const [catalog, gallery] = await Promise.all([getCatalog(), getGallery()]);
   const g = catalog.getGroup(group);
   const s = catalog.getSub(group, sub);
   if (!g || !s) notFound();
+
+  // Sold Gallery pieces for this page: by medium on Medium pages, by sub-category elsewhere.
+  const sold = gallery.filter((item) =>
+    item.isSold && (group === "medium" ? item.medium === sub : group !== "art-style" && item.subCategory === sub),
+  );
 
   return (
     <>
@@ -56,6 +62,7 @@ export default async function SubCategoryPage({ params }: PageProps<"/categories
       <Suspense fallback={<div className="container-page py-20 text-center text-muted">Loading…</div>}>
         <ShopView locked={lockedFor(group, sub)} />
       </Suspense>
+      <SoldWorks items={sold} collection={s.name} />
       <section className="container-page mt-8 max-w-3xl">
         <h2 className="font-serif text-xl">About our {s.name} collection</h2>
         <p className="mt-3 text-sm leading-relaxed text-muted">

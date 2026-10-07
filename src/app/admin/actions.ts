@@ -55,7 +55,7 @@ const TABLES: Record<TableName, TableConfig> = {
   faqs: { key: "id", columns: ["section", "question", "answer", "is_active", "sort_order"], flags: ["is_active"] },
   gallery_items: {
     key: "id",
-    columns: ["title", "medium", "size_label", "year", "note", "image", "is_sold", "is_active", "sort_order"],
+    columns: ["title", "medium", "size_label", "year", "note", "image", "sub_category", "is_sold", "is_active", "sort_order"],
     images: ["image"],
     flags: ["is_active", "is_sold"],
   },
@@ -127,6 +127,8 @@ export async function saveRow(table: TableName, values: Row, originalKey?: strin
     const cfg = TABLES[table];
     const data = pick(values, cfg.columns);
     if (table === "products") data.updated_at = new Date().toISOString();
+    // "Gallery only" in the category dropdown means no category.
+    if (table === "gallery_items" && !data.sub_category) data.sub_category = null;
 
     if (originalKey) {
       const { data: before } = await supabase.from(table).select("*").eq(cfg.key, originalKey).maybeSingle();

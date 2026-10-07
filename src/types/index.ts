@@ -103,6 +103,8 @@ export type GalleryItem = {
   year: number | null;
   note: string;
   image: string;
+  /** Sub-category page it also appears on, marked Sold. */
+  subCategory: string | null;
   isSold: boolean;
 };
 

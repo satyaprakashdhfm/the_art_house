@@ -13,12 +13,13 @@ const DEFAULTS: GalleryItemRow = {
   year: new Date().getFullYear(),
   note: "",
   image: "",
+  sub_category: null,
   is_sold: true,
   is_active: true,
   sort_order: 0,
 };
 
-export default function GalleryManager({ rows }: { rows: GalleryItemRow[] }) {
+export default function GalleryManager({ rows, categories }: { rows: GalleryItemRow[]; categories: { value: string; label: string }[] }) {
   return (
     <CollectionManager<GalleryItemRow>
       table="gallery_items"
@@ -41,6 +42,13 @@ export default function GalleryManager({ rows }: { rows: GalleryItemRow[] }) {
           label: "Medium",
           type: "select",
           options: Object.entries(MEDIUM_LABELS).map(([value, label]) => ({ value, label })),
+        },
+        {
+          name: "sub_category",
+          label: "Category",
+          type: "select",
+          options: [{ value: "", label: "Gallery only" }, ...categories],
+          help: "Also shows the piece, marked Sold, on this category's page and on its medium's page.",
         },
         { name: "size_label", label: "Size", type: "text", placeholder: 'e.g. 24 × 36" or A3' },
         { name: "year", label: "Year", type: "number", min: 1900, max: 2100, help: "Leave empty to hide." },

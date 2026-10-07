@@ -50,6 +50,8 @@ export type GalleryItemRow = {
   year: number | null;
   note: string;
   image: string;
+  /** Sub-category the piece also shows under (as Sold); null = Gallery only. */
+  sub_category: string | null;
   is_sold: boolean;
   is_active: boolean;
   sort_order: number;
@@ -175,5 +177,6 @@ export const toGalleryItem = (r: GalleryItemRow): GalleryItem => ({
   year: r.year,
   note: r.note,
   image: r.image,
+  subCategory: r.sub_category,
   isSold: r.is_sold,
 });
