@@ -107,20 +107,22 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* Bestsellers */}
-      <section className="container-page py-20">
-        <SectionHeading eyebrow="Loved by collectors" title="Bestsellers" link={{ href: "/shop", label: "Shop all" }} />
-        <div className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 sm:mx-0 sm:px-0 lg:gap-6">
-          {bestsellers.map((p) => (
-            <div key={p.id} className="w-[46%] shrink-0 snap-start sm:w-[31%] lg:w-[23.5%]">
-              <ProductCard product={p} />
-            </div>
-          ))}
-        </div>
-      </section>
+      {/* Bestsellers (hidden until a product is marked Bestseller) */}
+      {bestsellers.length > 0 && (
+        <section className="container-page py-20">
+          <SectionHeading eyebrow="Loved by collectors" title="Bestsellers" link={{ href: "/shop", label: "Shop all" }} />
+          <div className="no-scrollbar -mx-4 flex snap-x gap-4 overflow-x-auto px-4 sm:mx-0 sm:px-0 lg:gap-6">
+            {bestsellers.map((p) => (
+              <div key={p.id} className="w-[46%] shrink-0 snap-start sm:w-[31%] lg:w-[23.5%]">
+                <ProductCard product={p} />
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
 
       {/* Custom art banner */}
-      <section className="container-page">
+      <section className={`container-page ${bestsellers.length > 0 ? "" : "pt-20"}`}>
         {/* One green field, deep on the text side and brighter towards the paintings */}
         <div className="grid items-center overflow-hidden bg-ink bg-[radial-gradient(90%_120%_at_100%_50%,rgba(134,178,140,0.38),transparent_65%),linear-gradient(90deg,#1f3d2b_0%,#1f3d2b_30%,#2b5139_65%,#3a6a4c_100%)] text-paper lg:grid-cols-2 relative">
           <CustomArtDecor />
@@ -149,10 +151,12 @@ export default async function Home() {
       </section>
 
       {/* New arrivals */}
-      <section className="container-page py-20">
-        <SectionHeading eyebrow="Just in" title="New Arrivals" link={{ href: "/shop?sort=newest", label: "View all" }} />
-        <ProductGrid products={newArrivals} />
-      </section>
+      {newArrivals.length > 0 && (
+        <section className="container-page py-20">
+          <SectionHeading eyebrow="Just in" title="New Arrivals" link={{ href: "/shop?sort=newest", label: "View all" }} />
+          <ProductGrid products={newArrivals} />
+        </section>
+      )}
 
       {/* Testimonials */}
       {testimonials.length > 0 && (
