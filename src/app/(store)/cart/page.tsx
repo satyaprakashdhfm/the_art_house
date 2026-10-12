@@ -14,7 +14,7 @@ export default function CartPage() {
   const cart = useCart();
   const catalog = useCatalog();
   const lines = priceLines(cart.lines, catalog);
-  const totals = computeTotals(lines, cart.coupon, null, catalog);
+  const totals = computeTotals(lines, cart.coupon, catalog);
 
   return (
     <>

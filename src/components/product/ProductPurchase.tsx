@@ -48,7 +48,7 @@ export default function ProductPurchase({ product }: { product: Product }) {
     <div className="space-y-6">
       <div>
         <p className="font-serif text-3xl">{formatINR(unit * qty)}</p>
-        <p className="mt-1 text-xs text-muted">Inclusive of all taxes · Extra 5% off on prepaid orders</p>
+        <p className="mt-1 text-xs text-muted">Inclusive of all taxes</p>
       </div>
 
       <div>

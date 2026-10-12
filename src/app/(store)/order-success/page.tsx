@@ -31,7 +31,7 @@ export default function OrderSuccessPage() {
         <dt className="text-muted">Items</dt>
         <dd>{order.items}</dd>
         <dt className="text-muted">Payment</dt>
-        <dd>{order.payment === "online" ? "Paid online" : "Cash on Delivery"}</dd>
+        <dd>Paid online</dd>
         <dt className="text-muted">Total</dt>
         <dd className="font-medium">{formatINR(order.total)}</dd>
         <dt className="text-muted">Delivering to</dt>
@@ -50,7 +50,6 @@ export default function OrderSuccessPage() {
       <Link href="/shop" className="btn-primary mt-10">
         Continue shopping
       </Link>
-      <p className="mt-6 text-xs text-muted">This is a demo store — no real order or payment was made.</p>
     </div>
   );
 }

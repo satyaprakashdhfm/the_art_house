@@ -112,7 +112,7 @@ export default async function Footer() {
             ))}
           </ul>
           <p className="eyebrow mt-6">We accept</p>
-          <p className="mt-3 text-sm text-card/75">UPI · Cards · Net Banking · COD</p>
+          <p className="mt-3 text-sm text-card/75">UPI · Cards · Net Banking · Wallets</p>
         </div>
       </div>
       <div className="border-t border-card/15">

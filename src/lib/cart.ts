@@ -1,12 +1,7 @@
-import type { CartLine, Coupon, PaymentMethod, Product } from "@/types";
+import type { CartLine, Coupon, Product } from "@/types";
 import type { Catalog } from "@/lib/catalog";
 import { couponIsScoped } from "@/lib/catalog";
-import {
-  COD_FEE,
-  FREE_SHIPPING_THRESHOLD,
-  PREPAID_DISCOUNT_RATE,
-  SHIPPING_FEE,
-} from "@/data/pricing";
+import { FREE_SHIPPING_THRESHOLD, SHIPPING_FEE } from "@/data/pricing";
 import { addonsPrice, isDigitalFile, productPrice } from "@/lib/price";
 
 export type PricedLine = CartLine & {
@@ -52,37 +47,26 @@ export type Totals = {
   subtotal: number;
   couponDiscount: number;
   couponError?: string;
-  prepaidDiscount: number;
   shipping: number;
-  codFee: number;
   total: number;
   itemCount: number;
   amountToFreeShipping: number;
 };
 
-export function computeTotals(
-  lines: PricedLine[],
-  coupon: string | null,
-  payment: PaymentMethod | null,
-  catalog: Catalog,
-): Totals {
+export function computeTotals(lines: PricedLine[], coupon: string | null, catalog: Catalog): Totals {
   const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
   const itemCount = lines.reduce((s, l) => s + l.qty, 0);
   const c = coupon ? couponDiscount(catalog.findCoupon(coupon), lines) : { amount: 0 };
   const afterCoupon = subtotal - c.amount;
-  const prepaidDiscount = payment === "online" ? afterCoupon * PREPAID_DISCOUNT_RATE : 0;
   const physical = lines.some((l) => !isDigitalFile(l.size));
   const freeShip = afterCoupon >= FREE_SHIPPING_THRESHOLD;
   const shipping = lines.length === 0 || !physical || freeShip ? 0 : SHIPPING_FEE;
-  const codFee = payment === "cod" ? COD_FEE : 0;
   return {
     subtotal,
     couponDiscount: Math.round(c.amount),
     couponError: c.error,
-    prepaidDiscount: Math.round(prepaidDiscount),
     shipping,
-    codFee,
-    total: Math.round(afterCoupon - prepaidDiscount + shipping + codFee),
+    total: Math.round(afterCoupon + shipping),
     itemCount,
     amountToFreeShipping: Math.max(0, FREE_SHIPPING_THRESHOLD - afterCoupon),
   };

@@ -17,11 +17,7 @@ export default function OrderSummary({ totals, coupon }: { totals: Totals; coupo
       {totals.couponDiscount > 0 && (
         <Row label={`Coupon (${coupon})`} value={`− ${formatINR(totals.couponDiscount)}`} accent />
       )}
-      {totals.prepaidDiscount > 0 && (
-        <Row label="Prepaid discount (5%)" value={`− ${formatINR(totals.prepaidDiscount)}`} accent />
-      )}
       <Row label="Shipping" value={totals.shipping === 0 ? "Free" : formatINR(totals.shipping)} />
-      {totals.codFee > 0 && <Row label="COD fee" value={formatINR(totals.codFee)} />}
       <div className="flex justify-between border-t border-line pt-3 font-medium">
         <span>Total</span>
         <span>{formatINR(totals.total)}</span>

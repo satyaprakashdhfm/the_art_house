@@ -7,7 +7,7 @@ and admin sign-in are stored in Supabase. See [PLAN.md](PLAN.md) for the origina
 
 ```bash
 npm install
-cp .env.example .env.local   # then fill in the two Supabase values
+cp .env.example .env.local   # then fill in the Supabase and Razorpay values
 npm run dev
 ```
 
@@ -42,6 +42,30 @@ Anyone can sign in with Google as a customer. Admin access is limited to emails 
 with Google. Manage the list at `/admin/admins`. Admin checks are enforced by row-level security in the
 database, not only in the app.
 
+## Payments (Razorpay) and orders
+
+Checkout uses [Razorpay Standard Checkout](https://razorpay.com/docs/payments/payment-gateway/web-integration/standard/integration-steps/):
+
+1. `placeOrder` (`src/app/(store)/checkout/actions.ts`) re-prices the cart from the database, creates a Razorpay
+   order for that amount and saves an `orders` row as `pending_payment`.
+2. The browser opens Checkout with that order. On success, `confirmPayment` verifies Razorpay's signature against
+   the order ID stored in the database, then fetches the payment from Razorpay and marks the order `paid` only if it
+   is `captured`, for that Razorpay order, for exactly the order total.
+3. The webhook at `/api/razorpay/webhook` (signature-checked) does the same if the customer closes the tab before
+   step 2 finishes. Either path only moves a `pending_payment` order to `paid`, so an order is never processed twice.
+
+Setup:
+
+- Add `SUPABASE_SECRET_KEY`, `RAZORPAY_KEY_ID`, `RAZORPAY_KEY_SECRET` and `RAZORPAY_WEBHOOK_SECRET` to `.env.local`
+  and to the hosting provider (see `.env.example`). Use Test Mode keys until you go live.
+- Orders are created with `payment_capture: 1`, so payments are captured automatically whatever the Dashboard's
+  capture setting is.
+- Razorpay Dashboard → **Webhooks**: add `https://www.veronaarts.com/api/razorpay/webhook` with the events
+  `order.paid` and `payment.captured`, using the same secret as `RAZORPAY_WEBHOOK_SECRET`.
+- Test payments: card `4100 2800 0000 1007` (any future expiry, any CVV) or UPI ID `success@razorpay`.
+
+Orders are listed at `/admin/orders`. They can only be written by the server, never through the browser.
+
 ## Where things live
 
 | What | Where |
@@ -58,7 +82,7 @@ Storefront pages are pre-rendered and refreshed automatically when an admin save
 
 ## Still mocked
 
-- Checkout makes up an order ID; no payment is taken.
+- No order emails are sent yet; check new orders at `/admin/orders`.
 - Custom-art photos are only previewed in the browser; nothing is uploaded.
 - The newsletter and contact forms only show a confirmation message.
 - Cart and wishlist live in the browser's `localStorage`.

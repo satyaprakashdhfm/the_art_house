@@ -30,7 +30,7 @@ export const POLICIES: Policy[] = [
     sections: [
       { heading: "Ready artworks", body: ["Refunds are issued for items damaged in transit or significantly different from their description, reported within 7 days of delivery."] },
       { heading: "Custom orders", body: ["Custom artworks are made specially for you and cannot be refunded for change of mind once the preview is approved. The 50% advance is refundable only if we are unable to begin work."] },
-      { heading: "Processing", body: ["Approved refunds are processed to the original payment method within 5–7 working days. COD orders are refunded by bank transfer or UPI."] },
+      { heading: "Processing", body: ["Approved refunds are processed to the original payment method within 5–7 working days."] },
     ],
   },
   {

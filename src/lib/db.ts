@@ -58,7 +58,41 @@ export type GalleryItemRow = {
   created_at?: string;
 };
 
-export type AnnouncementRow = { id: string; message: string; is_active: boolean; sort_order: number };
+export type OrderLineSnapshot = {
+  productId: string;
+  title: string;
+  size: string;
+  sizeLabel: string;
+  addons: { frame: boolean; giftWrap: boolean; express: boolean };
+  qty: number;
+  unitPrice: number;
+  addonsPrice: number;
+  lineTotal: number;
+};
+
+export type OrderRow = {
+  id: string;
+  status: "pending_payment" | "paid";
+  name: string;
+  phone: string;
+  email: string;
+  address: string;
+  city: string;
+  state: string;
+  pincode: string;
+  lines: OrderLineSnapshot[];
+  coupon: string | null;
+  subtotal: number;
+  coupon_discount: number;
+  shipping: number;
+  total: number;
+  razorpay_order_id: string;
+  razorpay_payment_id: string | null;
+  paid_at: string | null;
+  created_at: string;
+};
+
+export type AnnouncementRow ={ id: string; message: string; is_active: boolean; sort_order: number };
 
 export type CouponRow = {
   code: string;

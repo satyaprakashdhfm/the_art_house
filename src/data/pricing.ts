@@ -80,7 +80,5 @@ export const FREE_FRAME_SIZES = ["A2", "A1", "24x36", "36x48"];
 
 export const GIFT_WRAP_PRICE = 99;
 export const EXPRESS_PRICE = 299;
-export const COD_FEE = 49;
 export const SHIPPING_FEE = 99;
 export const FREE_SHIPPING_THRESHOLD = 1999;
-export const PREPAID_DISCOUNT_RATE = 0.05;

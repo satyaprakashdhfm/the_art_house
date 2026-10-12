@@ -3,16 +3,19 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-import { CreditCard, Lock, Wallet } from "lucide-react";
-import type { PaymentMethod } from "@/types";
+import { CreditCard, Lock } from "lucide-react";
+import type { PlacedOrder } from "@/types";
 import PageHeader from "@/components/ui/PageHeader";
 import CouponInput from "@/components/cart/CouponInput";
 import OrderSummary from "@/components/cart/OrderSummary";
 import { cartActions, setLastOrder, useCart } from "@/context/cart";
 import { useCatalog } from "@/context/catalog";
 import { computeTotals, priceLines } from "@/lib/cart";
+import { validateCheckoutForm, type CheckoutForm } from "@/lib/checkout";
 import { formatINR } from "@/lib/format";
 import { sizeLabel } from "@/lib/price";
+import { createRazorpay } from "@/lib/razorpay-checkout";
+import { confirmPayment, placeOrder } from "./actions";
 
 const STATES = [
   "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh",
@@ -20,55 +23,90 @@ const STATES = [
   "Rajasthan", "Tamil Nadu", "Telangana", "Uttar Pradesh", "Uttarakhand", "West Bengal", "Other",
 ];
 
-type Form = Record<"name" | "phone" | "email" | "address" | "city" | "state" | "pincode", string>;
+type Form = CheckoutForm;
 
 export default function CheckoutPage() {
   const router = useRouter();
   const cart = useCart();
-  const [payment, setPayment] = useState<PaymentMethod>("online");
   const [form, setForm] = useState<Form>({ name: "", phone: "", email: "", address: "", city: "", state: "", pincode: "" });
   const [errors, setErrors] = useState<Partial<Form>>({});
   const [placing, setPlacing] = useState(false);
+  const [orderError, setOrderError] = useState<string | null>(null);
 
   const catalog = useCatalog();
   const lines = priceLines(cart.lines, catalog);
-  const totals = computeTotals(lines, cart.coupon, payment, catalog);
+  const totals = computeTotals(lines, cart.coupon, catalog);
 
   const set = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm((f) => ({ ...f, [k]: e.target.value }));
 
   function validate() {
-    const e: Partial<Form> = {};
-    if (!form.name.trim()) e.name = "Enter your full name";
-    if (!/^[6-9]\d{9}$/.test(form.phone)) e.phone = "Enter a valid 10-digit mobile number";
-    if (!/^\S+@\S+\.\S+$/.test(form.email)) e.email = "Enter a valid email";
-    if (!form.address.trim()) e.address = "Enter your address";
-    if (!form.city.trim()) e.city = "Enter your city";
-    if (!form.state) e.state = "Select your state";
-    if (!/^[1-9]\d{5}$/.test(form.pincode)) e.pincode = "Enter a valid 6-digit pincode";
+    const e = validateCheckoutForm(form);
     setErrors(e);
     return Object.keys(e).length === 0;
   }
 
-  function placeOrder(e: React.FormEvent) {
+  function finish(order: PlacedOrder) {
+    setLastOrder(order);
+    cartActions.clear();
+    router.push("/order-success");
+  }
+
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
     if (!validate()) return;
+    setOrderError(null);
     setPlacing(true);
-    // Mock: no payment gateway yet. Simulate a short processing delay.
-    setTimeout(() => {
-      setLastOrder({
-        id: `TAH-${Date.now().toString(36).toUpperCase()}`,
-        name: form.name,
-        email: form.email,
-        city: form.city,
-        payment,
-        total: totals.total,
-        items: totals.itemCount,
-        placedAt: new Date().toISOString(),
+
+    // Only the lines shown (and priced) on this page; the server prices them again.
+    const shown = cart.lines.filter((l) => lines.some((p) => p.key === l.key));
+    const res = await placeOrder({ form, lines: shown, coupon: cart.coupon, expectedTotal: totals.total }).catch(
+      () => ({ ok: false as const, error: "We couldn't reach the server. Check your connection and try again." }),
+    );
+    if (!res.ok) {
+      setOrderError(res.error);
+      setPlacing(false);
+      return;
+    }
+    const { order, razorpay } = res;
+
+    let failure: string | null = null;
+    try {
+      const rzp = await createRazorpay({
+        key: razorpay.keyId,
+        amount: razorpay.amount,
+        currency: "INR",
+        name: "Verona Arts",
+        description: `Order ${order.id}`,
+        image: `${window.location.origin}/images/brand/emblem.png`,
+        order_id: razorpay.orderId,
+        prefill: { name: form.name, email: form.email, contact: `+91${form.phone}` },
+        notes: { order: order.id },
+        theme: { color: "#c27c38" },
+        handler: async (response) => {
+          const confirmed = await confirmPayment(order.id, response).catch(() => ({ ok: false }));
+          if (confirmed.ok) return finish(order);
+          setOrderError(
+            `We couldn't confirm your payment. If money was deducted, contact us with order ID ${order.id} and we'll sort it out.`,
+          );
+          setPlacing(false);
+        },
+        modal: {
+          ondismiss: () => {
+            setOrderError(failure ?? "Payment was cancelled, so your order hasn't been placed. You can try again.");
+            setPlacing(false);
+          },
+        },
       });
-      cartActions.clear();
-      router.push("/order-success");
-    }, 800);
+      // Checkout shows the failure and lets the customer retry; remember it in case they close the window.
+      rzp.on("payment.failed", (r) => {
+        failure = `Payment failed: ${r.error.description} If any money was deducted, it will be refunded automatically.`;
+      });
+      rzp.open();
+    } catch {
+      setOrderError("We couldn't open the payment window. Check your connection and try again.");
+      setPlacing(false);
+    }
   }
 
   if (lines.length === 0 && !placing) {
@@ -98,7 +136,7 @@ export default function CheckoutPage() {
   return (
     <>
       <PageHeader title="Checkout" crumbs={[{ href: "/cart", label: "Cart" }, { label: "Checkout" }]} />
-      <form onSubmit={placeOrder} noValidate className="container-page grid gap-12 py-12 lg:grid-cols-[1fr_400px]">
+      <form onSubmit={submit} noValidate className="container-page grid gap-12 py-12 lg:grid-cols-[1fr_400px]">
         <div className="space-y-10">
           <section>
             <h2 className="font-serif text-xl">Delivery address</h2>
@@ -133,25 +171,13 @@ export default function CheckoutPage() {
 
           <section>
             <h2 className="font-serif text-xl">Payment</h2>
-            <div className="mt-5 grid gap-3">
-              {[
-                { key: "online" as const, icon: CreditCard, title: "Pay online (Razorpay)", text: "UPI, cards, net banking, wallets — extra 5% off" },
-                { key: "cod" as const, icon: Wallet, title: "Cash on Delivery", text: "₹49 COD handling fee applies" },
-              ].map((m) => (
-                <label
-                  key={m.key}
-                  className={`flex cursor-pointer items-start gap-3 border p-4 ${payment === m.key ? "border-ink bg-card" : "border-line"}`}
-                >
-                  <input type="radio" name="payment" checked={payment === m.key} onChange={() => setPayment(m.key)} className="mt-1 accent-ink" />
-                  <m.icon className="mt-0.5 h-5 w-5 text-gold" />
-                  <span>
-                    <span className="block text-sm font-medium">{m.title}</span>
-                    <span className="block text-xs text-muted">{m.text}</span>
-                  </span>
-                </label>
-              ))}
+            <div className="mt-5 flex items-start gap-3 border border-line bg-card p-4">
+              <CreditCard className="mt-0.5 h-5 w-5 text-gold" />
+              <span>
+                <span className="block text-sm font-medium">Pay online with Razorpay</span>
+                <span className="block text-xs text-muted">UPI, debit / credit cards, net banking and wallets — processed securely by Razorpay.</span>
+              </span>
             </div>
-            <p className="mt-3 text-xs text-muted">Demo store: no real payment is taken.</p>
           </section>
         </div>
 
@@ -172,8 +198,13 @@ export default function CheckoutPage() {
           <OrderSummary totals={totals} coupon={cart.coupon} />
           <button type="submit" disabled={placing} className="btn-primary w-full">
             <Lock className="h-4 w-4" />
-            {placing ? "Placing order…" : payment === "online" ? `Pay ${formatINR(totals.total)}` : "Place order"}
+            {placing ? "Processing…" : `Pay ${formatINR(totals.total)}`}
           </button>
+          {orderError && (
+            <p role="alert" className="text-sm text-sale">
+              {orderError}
+            </p>
+          )}
         </aside>
       </form>
     </>

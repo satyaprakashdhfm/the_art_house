@@ -1,6 +1,6 @@
 "use client";
 
-import type { Addons, CartLine, Product } from "@/types";
+import type { Addons, CartLine, PlacedOrder, Product } from "@/types";
 import { createStore, useStore } from "@/lib/store";
 import { isDigitalFile } from "@/lib/price";
 
@@ -57,19 +57,8 @@ export function useCartCount() {
   return useCart().lines.reduce((n, l) => n + l.qty, 0);
 }
 
-/** Last placed (mock) order, shown on the confirmation page. */
-export type MockOrder = {
-  id: string;
-  name: string;
-  email: string;
-  city: string;
-  payment: "online" | "cod";
-  total: number;
-  items: number;
-  placedAt: string;
-};
+/** Last placed order, shown on the confirmation page. */
+const orderStore = createStore<PlacedOrder | null>(null, "tah-last-order");
 
-const orderStore = createStore<MockOrder | null>(null, "tah-last-order");
-
-export const setLastOrder = (o: MockOrder) => orderStore.set(o);
+export const setLastOrder = (o: PlacedOrder) => orderStore.set(o);
 export const useLastOrder = () => useStore(orderStore);

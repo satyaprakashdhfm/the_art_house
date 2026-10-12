@@ -64,7 +64,16 @@ export type CartLine = {
   max?: number;
 };
 
-export type PaymentMethod = "online" | "cod";
+/** Summary of a just-paid order, shown on the confirmation page. */
+export type PlacedOrder = {
+  id: string;
+  name: string;
+  email: string;
+  city: string;
+  total: number;
+  items: number;
+  placedAt: string;
+};
 
 export type Coupon = {
   code: string;

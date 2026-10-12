@@ -94,8 +94,7 @@ insert into public.hero_slides (eyebrow,title,text,cta_label,cta_href,image,tone
 insert into public.announcements (message,sort_order) values
 ('Free shipping on orders above ₹1,999',0),
 ('Use code WELCOME10 for 10% off your first order',1),
-('Extra 5% off on prepaid orders',2),
-('Custom portraits — free digital preview before we paint',3);
+('Custom portraits — free digital preview before we paint',2);
 
 insert into public.coupons (code,title,description,terms,percent,max_discount,min_items,group_slugs,sub_slugs,sort_order) values
 ('WELCOME10','10% off your first order','New here? Take 10% off anything in the store.','Max discount ₹500. One use per customer.',10,500,0,'{}','{}',0),
@@ -106,9 +105,8 @@ insert into public.coupons (code,title,description,terms,percent,max_discount,mi
 
 insert into public.offers (title,text,sort_order) values
 ('Free shipping','On all orders above ₹1,999.',0),
-('Extra 5% off on prepaid','Pay online with UPI, card or net banking and save 5% more.',1),
-('Free frame','On every A2, A1, 24×36" and 36×48" artwork.',2),
-('Custom portrait promise','Free digital preview and 2 free revisions on every custom order.',3);
+('Free frame','On every A2, A1, 24×36" and 36×48" artwork.',1),
+('Custom portrait promise','Free digital preview and 2 free revisions on every custom order.',2);
 
 insert into public.testimonials (name,city,rating,text,date_label,show_on_home,sort_order) values
 ('Ananya R.','Bengaluru',5,'Even more beautiful in person. The colours are rich and the packaging was excellent.','Aug 2026',true,0),
@@ -124,7 +122,7 @@ insert into public.faqs (section,question,answer,sort_order) values
 ('general','How long does delivery take?','Ready originals and prints ship in 5–7 days. Made-to-order paintings take 12–18 days. Express delivery is available at checkout.',2),
 ('general','Do you ship outside India?','Not yet — we currently deliver across India only.',3),
 ('general','Is shipping free?','Shipping is free on orders above ₹1,999. Below that, a flat ₹99 applies.',4),
-('general','Which payment methods do you accept?','UPI, debit/credit cards, net banking and wallets via Razorpay, plus Cash on Delivery (₹49 fee). Prepaid orders get an extra 5% off.',5),
+('general','Which payment methods do you accept?','UPI, debit/credit cards, net banking and wallets, all processed securely by Razorpay. We do not offer Cash on Delivery.',5),
 ('general','Can I return a painting?','If your artwork arrives damaged, tell us within 7 days with an unboxing photo and we will replace or refund it. Custom orders cannot be returned for change of mind.',6),
 ('general','Do paintings come framed?','Frames are an optional add-on. Every A2, A1, 24×36" and 36×48" artwork gets a free frame.',7),
 ('custom','What kind of photo should I upload?','A clear, well-lit photo where faces are sharp and not too small. Multiple photos are fine — we can combine people from different pictures.',0),

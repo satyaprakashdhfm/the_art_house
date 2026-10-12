@@ -16,6 +16,7 @@ import {
   MessageSquareQuote,
   Palette,
   ShieldCheck,
+  ShoppingBag,
   TicketPercent,
   X,
 } from "lucide-react";
@@ -24,6 +25,7 @@ import SignOutButton from "@/components/auth/SignOutButton";
 
 const NAV = [
   { href: "/admin", label: "Dashboard", icon: LayoutDashboard },
+  { href: "/admin/orders", label: "Orders", icon: ShoppingBag },
   { href: "/admin/products", label: "Products", icon: Palette },
   { href: "/admin/hero", label: "Homepage slides", icon: GalleryHorizontal },
   { href: "/admin/gallery", label: "Gallery", icon: Images },

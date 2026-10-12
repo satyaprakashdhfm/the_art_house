@@ -15,7 +15,7 @@ export default function CartDrawer() {
   const cart = useCart();
   const catalog = useCatalog();
   const lines = priceLines(cart.lines, catalog);
-  const totals = computeTotals(lines, cart.coupon, null, catalog);
+  const totals = computeTotals(lines, cart.coupon, catalog);
 
   return (
     <Drawer
@@ -29,7 +29,7 @@ export default function CartDrawer() {
               <span className="text-muted">Subtotal</span>
               <span className="font-medium">{formatINR(totals.subtotal)}</span>
             </div>
-            <p className="text-xs text-muted">Coupons, shipping and prepaid discount are applied at checkout.</p>
+            <p className="text-xs text-muted">Coupons and shipping are applied at checkout.</p>
             <div className="grid grid-cols-2 gap-2">
               <Link href="/cart" onClick={ui.closeCart} className="btn-outline px-3">
                 View cart
