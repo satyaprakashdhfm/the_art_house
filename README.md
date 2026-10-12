@@ -66,6 +66,11 @@ Setup:
 
 Orders are listed at `/admin/orders`. They can only be written by the server, never through the browser.
 
+When an order is paid, the customer gets a confirmation email and `info@veronaarts.com` gets a new-order alert
+(`src/lib/email.ts`, sent through [Resend](https://resend.com) with `RESEND_KEY`). `veronaarts.com` must be verified in
+Resend → Domains (its DNS records go in GoDaddy, next to the Zoho mail records); until then Resend refuses to send.
+A failed email is logged and never affects the payment.
+
 When an order is paid, every one-of-a-kind original in it is marked **Sold** (`products.is_sold`): it stays listed
 with a Sold badge but can't be bought. Untick "Sold" in Admin → Products to put it back on sale.
 

@@ -1,4 +1,6 @@
 import { revalidatePath } from "next/cache";
+import type { OrderRow } from "@/lib/db";
+import { sendOrderEmails } from "@/lib/email";
 import { fetchOrderPayments, paymentSettlesOrder } from "@/lib/razorpay";
 import { createSecretClient } from "@/lib/supabase/secret";
 
@@ -16,14 +18,15 @@ export async function markOrderPaid(orderId: string, paymentId: string) {
     .update({ status: "paid", razorpay_payment_id: paymentId, paid_at: new Date().toISOString() })
     .eq("id", orderId)
     .eq("status", "pending_payment")
-    .select("lines");
+    .select("*");
   if (error) {
     console.error(`markOrderPaid: could not mark ${orderId} paid`, error.message);
     return false;
   }
   if (!data?.length) return true; // Already paid through another path.
+  const order = data[0] as OrderRow;
 
-  const productIds = (data[0].lines as { productId: string }[]).map((l) => l.productId);
+  const productIds = order.lines.map((l) => l.productId);
   const { error: soldError } = await db
     .from("products")
     .update({ is_sold: true, updated_at: new Date().toISOString() })
@@ -33,6 +36,9 @@ export async function markOrderPaid(orderId: string, paymentId: string) {
 
   // Sold pieces must disappear from sale on every cached page.
   revalidatePath("/", "layout");
+
+  // Only the caller that marked it paid gets here, so each order is emailed once. Never throws.
+  await sendOrderEmails(order);
   return true;
 }
 
