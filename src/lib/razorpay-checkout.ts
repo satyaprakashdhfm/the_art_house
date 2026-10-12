@@ -29,6 +29,9 @@ declare global {
   }
 }
 
+/** True while the payment window is open; it then reports the result itself. */
+export const checkoutWindow = { open: false };
+
 let loading: Promise<void> | null = null;
 
 export function loadRazorpay() {

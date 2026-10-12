@@ -66,6 +66,13 @@ Setup:
 
 Orders are listed at `/admin/orders`. They can only be written by the server, never through the browser.
 
+When an order is paid, every one-of-a-kind original in it is marked **Sold** (`products.is_sold`): it stays listed
+with a Sold badge but can't be bought. Untick "Sold" in Admin → Products to put it back on sale.
+
+On phones, UPI payments switch to the payment app and the browser may reload the tab. The order ID is kept in the
+browser while payment is open; when the shopper returns, `checkOrderPayment` asks Razorpay whether it was paid and,
+if so, shows the confirmation and empties the cart (`src/components/cart/PendingPaymentCheck.tsx`).
+
 ## Where things live
 
 | What | Where |

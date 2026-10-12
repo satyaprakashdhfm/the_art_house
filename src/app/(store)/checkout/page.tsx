@@ -8,14 +8,14 @@ import type { PlacedOrder } from "@/types";
 import PageHeader from "@/components/ui/PageHeader";
 import CouponInput from "@/components/cart/CouponInput";
 import OrderSummary from "@/components/cart/OrderSummary";
-import { cartActions, setLastOrder, useCart } from "@/context/cart";
+import { completeOrder, pendingPayment, useCart } from "@/context/cart";
 import { useCatalog } from "@/context/catalog";
 import { computeTotals, priceLines } from "@/lib/cart";
 import { validateCheckoutForm, type CheckoutForm } from "@/lib/checkout";
 import { formatINR } from "@/lib/format";
 import { sizeLabel } from "@/lib/price";
-import { createRazorpay } from "@/lib/razorpay-checkout";
-import { confirmPayment, placeOrder } from "./actions";
+import { checkoutWindow, createRazorpay } from "@/lib/razorpay-checkout";
+import { checkOrderPayment, confirmPayment, placeOrder } from "./actions";
 
 const STATES = [
   "Andhra Pradesh", "Assam", "Bihar", "Chhattisgarh", "Delhi", "Goa", "Gujarat", "Haryana", "Himachal Pradesh",
@@ -47,8 +47,7 @@ export default function CheckoutPage() {
   }
 
   function finish(order: PlacedOrder) {
-    setLastOrder(order);
-    cartActions.clear();
+    completeOrder(order);
     router.push("/order-success");
   }
 
@@ -84,6 +83,7 @@ export default function CheckoutPage() {
         notes: { order: order.id },
         theme: { color: "#c27c38" },
         handler: async (response) => {
+          checkoutWindow.open = false;
           const confirmed = await confirmPayment(order.id, response).catch(() => ({ ok: false }));
           if (confirmed.ok) return finish(order);
           setOrderError(
@@ -92,8 +92,12 @@ export default function CheckoutPage() {
           setPlacing(false);
         },
         modal: {
-          ondismiss: () => {
-            setOrderError(failure ?? "Payment was cancelled, so your order hasn't been placed. You can try again.");
+          ondismiss: async () => {
+            checkoutWindow.open = false;
+            // On a phone the window can close after paying in a UPI app, before Checkout reports success.
+            const { status } = await checkOrderPayment(order.id).catch(() => ({ status: "pending" as const }));
+            if (status === "paid") return finish(order);
+            setOrderError(failure ?? "Payment was not completed, so your order hasn't been placed. You can try again.");
             setPlacing(false);
           },
         },
@@ -102,6 +106,9 @@ export default function CheckoutPage() {
       rzp.on("payment.failed", (r) => {
         failure = `Payment failed: ${r.error.description} If any money was deducted, it will be refunded automatically.`;
       });
+      // Remembered so the order can still be completed if this tab reloads while a UPI app is open.
+      pendingPayment.start(order);
+      checkoutWindow.open = true;
       rzp.open();
     } catch {
       setOrderError("We couldn't open the payment window. Check your connection and try again.");

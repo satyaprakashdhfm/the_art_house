@@ -14,7 +14,8 @@ export type PricedLine = CartLine & {
 export function priceLines(lines: CartLine[], catalog: Catalog): PricedLine[] {
   return lines.flatMap((line) => {
     const product = catalog.getProductById(line.productId);
-    if (!product) return [];
+    // Hidden, deleted or already-sold products can't be bought.
+    if (!product || product.isSold) return [];
     const unitPrice = productPrice(product, line.size);
     const addons = addonsPrice(line.size, line.addons);
     return [{ ...line, product, unitPrice, addonsPrice: addons, lineTotal: (unitPrice + addons) * line.qty }];

@@ -46,6 +46,8 @@ export type Product = {
   rating: number;
   reviewCount: number;
   isPublished: boolean;
+  /** A one-of-a-kind original that has been bought: still shown, but can't be added to the cart. */
+  isSold: boolean;
 };
 
 export type Addons = {

@@ -45,11 +45,11 @@ export default function WishlistPage() {
                     <Image src={p.images[0]} alt={p.title} fill sizes="(min-width: 1024px) 25vw, 50vw" className="object-cover" />
                   </div>
                   <p className="mt-3 text-sm group-hover:text-gold">{p.title}</p>
-                  <p className="text-sm font-medium">From {formatINR(startingPrice(p))}</p>
+                  <p className={`text-sm font-medium ${p.isSold ? "text-sale" : ""}`}>{p.isSold ? "Sold" : `From ${formatINR(startingPrice(p))}`}</p>
                 </Link>
                 <div className="mt-3 grid grid-cols-2 gap-2">
-                  <button type="button" onClick={() => moveToCart(p)} className="btn-primary px-2 py-2 text-xs">
-                    Move to cart
+                  <button type="button" onClick={() => moveToCart(p)} disabled={p.isSold} className="btn-primary px-2 py-2 text-xs disabled:opacity-40">
+                    {p.isSold ? "Sold" : "Move to cart"}
                   </button>
                   <button type="button" onClick={() => wishlistActions.remove(p.id)} className="btn-outline px-2 py-2 text-xs">
                     Remove

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Minus, Plus, Truck } from "lucide-react";
 import type { Addons, Product } from "@/types";
@@ -9,6 +10,7 @@ import { SIZES, EXPRESS_PRICE, GIFT_WRAP_PRICE, FRAME_PRICES, FREE_FRAME_SIZES }
 import { addonsPrice, framePrice, isDigitalFile, productPrice } from "@/lib/price";
 import { formatINR } from "@/lib/format";
 import { cartActions } from "@/context/cart";
+import { whatsappLink } from "@/lib/contact";
 import { ui } from "@/context/ui";
 
 export default function ProductPurchase({ product }: { product: Product }) {
@@ -42,6 +44,30 @@ export default function ProductPurchase({ product }: { product: Product }) {
     if (!/^[1-9]\d{5}$/.test(pincode)) return setDelivery("Please enter a valid 6-digit pincode.");
     const days = product.type === "made-to-order" ? "12–18" : addons.express ? "2–4" : "5–7";
     setDelivery(`Delivers to ${pincode} in ${days} days.`);
+  }
+
+  if (product.isSold) {
+    return (
+      <div className="space-y-4 border border-line bg-card p-6">
+        <p className="font-serif text-2xl text-sale">Sold</p>
+        <p className="text-sm text-muted">
+          This one-of-a-kind original has found a home. We can paint something similar for you, in your size and colours.
+        </p>
+        <div className="flex flex-col gap-2 sm:flex-row">
+          <Link href="/custom-art" className="btn-primary flex-1">
+            Commission a similar piece
+          </Link>
+          <a
+            href={whatsappLink(`Hi! I loved “${product.title}”, which is sold. Could you paint something similar?`)}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="btn-outline flex-1"
+          >
+            Ask on WhatsApp
+          </a>
+        </div>
+      </div>
+    );
   }
 
   return (

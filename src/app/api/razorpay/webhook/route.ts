@@ -1,3 +1,4 @@
+import { markOrderPaid } from "@/lib/orders";
 import { paymentSettlesOrder, verifyWebhookSignature, type RazorpayPayment } from "@/lib/razorpay";
 import { createSecretClient } from "@/lib/supabase/secret";
 
@@ -37,12 +38,7 @@ export async function POST(request: Request) {
     return new Response("Ignored");
   }
 
-  const { error } = await db
-    .from("orders")
-    .update({ status: "paid", razorpay_payment_id: payment.id, paid_at: new Date().toISOString() })
-    .eq("id", row.id)
-    .eq("status", "pending_payment");
   // A non-2xx response makes Razorpay retry the delivery.
-  if (error) return new Response(`Could not update order: ${error.message}`, { status: 500 });
+  if (!(await markOrderPaid(row.id, payment.id))) return new Response("Could not update order", { status: 500 });
   return new Response("OK");
 }

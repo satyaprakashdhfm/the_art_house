@@ -26,10 +26,10 @@ const TABLES: Record<TableName, TableConfig> = {
     columns: [
       "slug", "title", "description", "group_slug", "sub_category", "medium", "style", "type", "orientation",
       "sizes", "images", "rooms", "subjects", "panels", "is_bestseller", "is_new", "rating", "review_count",
-      "is_published", "sort_order",
+      "is_published", "is_sold", "sort_order",
     ],
     images: ["images"],
-    flags: ["is_published", "is_bestseller", "is_new"],
+    flags: ["is_published", "is_bestseller", "is_new", "is_sold"],
   },
   hero_slides: {
     key: "id",

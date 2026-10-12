@@ -62,3 +62,24 @@ const orderStore = createStore<PlacedOrder | null>(null, "tah-last-order");
 
 export const setLastOrder = (o: PlacedOrder) => orderStore.set(o);
 export const useLastOrder = () => useStore(orderStore);
+
+/**
+ * An order whose payment window was opened but not yet confirmed. Kept so a customer who paid in
+ * a UPI app, and came back to a reloaded tab, still lands on the confirmation page.
+ */
+export type PendingPayment = { order: PlacedOrder; startedAt: number };
+
+const pendingStore = createStore<PendingPayment | null>(null, "tah-pending-payment");
+
+export const pendingPayment = {
+  get: () => pendingStore.get(),
+  start: (order: PlacedOrder) => pendingStore.set({ order, startedAt: Date.now() }),
+  clear: () => pendingStore.set(null),
+};
+
+/** A paid order: remember it for the confirmation page and empty the cart. */
+export function completeOrder(order: PlacedOrder) {
+  setLastOrder(order);
+  cartActions.clear();
+  pendingStore.set(null);
+}

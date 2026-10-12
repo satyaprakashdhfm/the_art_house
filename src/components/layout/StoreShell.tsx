@@ -3,6 +3,7 @@ import AnnouncementBar from "@/components/layout/AnnouncementBar";
 import Header from "@/components/layout/Header";
 import Footer from "@/components/layout/Footer";
 import CartDrawer from "@/components/cart/CartDrawer";
+import PendingPaymentCheck from "@/components/cart/PendingPaymentCheck";
 import SearchOverlay from "@/components/layout/SearchOverlay";
 import MobileMenu from "@/components/layout/MobileMenu";
 import WhatsAppButton from "@/components/layout/WhatsAppButton";
@@ -21,6 +22,7 @@ export default async function StoreShell({ children }: { children: ReactNode }) 
       <Footer />
       <WhatsAppButton />
       <CartDrawer />
+      <PendingPaymentCheck />
       <SearchOverlay />
       <MobileMenu />
     </CatalogProvider>

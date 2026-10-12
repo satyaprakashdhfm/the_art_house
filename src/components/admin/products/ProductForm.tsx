@@ -39,6 +39,7 @@ export const NEW_PRODUCT: ProductRow = {
   rating: 4.8,
   review_count: 0,
   is_published: true,
+  is_sold: false,
   sort_order: 0,
 };
 
@@ -244,6 +245,12 @@ export default function ProductForm({ initial, groups, subs }: { initial: Produc
                 <Toggle checked={p.is_published} onChange={(v) => set("is_published", v)} label="Live on website" help="Turn off to hide without deleting." />
                 <Toggle checked={p.is_bestseller} onChange={(v) => set("is_bestseller", v)} label="Bestseller" help="Shown in the homepage Bestsellers row." />
                 <Toggle checked={p.is_new} onChange={(v) => set("is_new", v)} label="New arrival" help="Shown in New Arrivals." />
+                <Toggle
+                  checked={p.is_sold}
+                  onChange={(v) => set("is_sold", v)}
+                  label="Sold"
+                  help="Set automatically when an original is paid for. Sold pieces stay listed but can't be bought."
+                />
               </div>
             </Section>
 

@@ -7,6 +7,7 @@ import { validateCheckoutForm, type CheckoutForm } from "@/lib/checkout";
 import { computeTotals, priceLines } from "@/lib/cart";
 import { isDigitalFile, sizeLabel } from "@/lib/price";
 import { createRazorpayOrder, fetchPayment, paymentSettlesOrder, razorpayKeyId, verifyPaymentSignature } from "@/lib/razorpay";
+import { markOrderPaid, syncOrderPayment } from "@/lib/orders";
 import { getCatalog } from "@/lib/site-data";
 import { createSecretClient } from "@/lib/supabase/secret";
 
@@ -43,6 +44,9 @@ export async function placeOrder(input: PlaceOrderInput): Promise<PlaceOrderResu
       const product = catalog.getProductById(String(l?.productId));
       if (!product || !product.sizes.includes(l.size)) {
         return { ok: false, error: "Some items in your cart are no longer available. Please review your cart." };
+      }
+      if (product.isSold) {
+        return { ok: false, error: `Sorry, “${product.title}” has just been sold. Please remove it from your cart.` };
       }
       const digital = isDigitalFile(l.size);
       const max = product.type === "original" ? 1 : 10;
@@ -150,17 +154,24 @@ export async function confirmPayment(orderId: string, response: PaymentResponse)
       return { ok: false };
     }
 
-    // Only a pending order moves to paid, so this and the webhook can't both process it.
-    const { error } = await db
-      .from("orders")
-      .update({ status: "paid", razorpay_payment_id: paymentId, paid_at: new Date().toISOString() })
-      .eq("id", orderId)
-      .eq("status", "pending_payment");
-    // The payment is genuine either way; the order.paid webhook will retry the update.
-    if (error) console.error(`confirmPayment: could not mark ${orderId} paid`, error.message);
+    // The payment is genuine even if saving fails; the order.paid webhook will retry it.
+    await markOrderPaid(orderId, paymentId);
     return { ok: true };
   } catch (err) {
     console.error("confirmPayment failed", err);
     return { ok: false };
+  }
+}
+
+/**
+ * Whether an order has been paid, asking Razorpay if we haven't heard yet. Used when the customer
+ * comes back to the site after paying in a UPI app, or closes the payment window.
+ */
+export async function checkOrderPayment(orderId: string): Promise<{ status: "paid" | "pending" | "unknown" }> {
+  try {
+    return { status: await syncOrderPayment(String(orderId)) };
+  } catch (err) {
+    console.error("checkOrderPayment failed", err);
+    return { status: "pending" };
   }
 }

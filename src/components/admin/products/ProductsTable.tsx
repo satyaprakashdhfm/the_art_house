@@ -128,7 +128,10 @@ export default function ProductsTable({ rows, groups, subs }: { rows: ProductRow
                       {p.images[0] && <Image src={p.images[0]} alt="" fill sizes="44px" className="object-cover" />}
                     </div>
                     <div className="min-w-0">
-                      <p className={`truncate font-medium group-hover:text-gold ${p.is_published ? "" : "text-muted"}`}>{p.title}</p>
+                      <p className={`truncate font-medium group-hover:text-gold ${p.is_published ? "" : "text-muted"}`}>
+                        {p.title}
+                        {p.is_sold && <span className="ml-2 rounded-full bg-sale/10 px-2 py-0.5 text-[10px] font-medium text-sale uppercase">Sold</span>}
+                      </p>
                       <p className="text-xs text-muted">
                         {MEDIUM_LABELS[p.medium as keyof typeof MEDIUM_LABELS]} · {p.type.replace(/-/g, " ")}
                       </p>

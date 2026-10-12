@@ -22,6 +22,7 @@ export type ProductRow = {
   rating: number;
   review_count: number;
   is_published: boolean;
+  is_sold: boolean;
   sort_order: number;
   created_at?: string;
 };
@@ -153,6 +154,7 @@ export function toProduct(r: ProductRow): Product {
     rating: Number(r.rating),
     reviewCount: r.review_count,
     isPublished: r.is_published,
+    isSold: r.is_sold ?? false,
   };
 }
 

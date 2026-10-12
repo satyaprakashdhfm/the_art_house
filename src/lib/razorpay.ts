@@ -44,6 +44,18 @@ export async function fetchPayment(paymentId: string) {
   return body as RazorpayPayment;
 }
 
+/** Every payment attempt on a Razorpay order (failed ones included). */
+export async function fetchOrderPayments(razorpayOrderId: string) {
+  const { keyId, keySecret } = keys();
+  const res = await fetch(`https://api.razorpay.com/v1/orders/${encodeURIComponent(razorpayOrderId)}/payments`, {
+    headers: { Authorization: `Basic ${Buffer.from(`${keyId}:${keySecret}`).toString("base64")}` },
+    cache: "no-store",
+  });
+  const body = await res.json();
+  if (!res.ok) throw new Error(`Razorpay order payments fetch failed: ${body?.error?.description ?? res.status}`);
+  return (body.items ?? []) as RazorpayPayment[];
+}
+
 /**
  * A signature only proves the fields weren't tampered with. Before an order counts as paid, the
  * payment itself must be captured, for this Razorpay order, for exactly the order's total.

@@ -8,6 +8,9 @@ import { startingPrice } from "@/lib/price";
 import { formatINR } from "@/lib/format";
 
 function Badge({ product }: { product: Product }) {
+  if (product.isSold) {
+    return <span className="absolute top-3 left-3 bg-sale px-2 py-1 text-[10px] font-medium tracking-widest text-paper uppercase">Sold</span>;
+  }
   const text = product.type === "original" ? "Original" : product.isNew ? "New" : product.isBestseller ? "Bestseller" : null;
   if (!text) return null;
   return (
@@ -39,10 +42,14 @@ export default function ProductCard({ product, priority }: { product: Product; p
           <p className="text-[11px] tracking-wider text-muted uppercase">{MEDIUM_LABELS[product.medium]}</p>
           <h3 className="text-sm leading-snug group-hover:text-gold">{product.title}</h3>
           <div className="flex items-center justify-between">
-            <p className="text-sm font-medium">
-              {single ? "" : "From "}
-              {formatINR(from)}
-            </p>
+            {product.isSold ? (
+              <p className="text-sm font-medium text-sale">Sold</p>
+            ) : (
+              <p className="text-sm font-medium">
+                {single ? "" : "From "}
+                {formatINR(from)}
+              </p>
+            )}
             {product.reviewCount > 0 && (
               <p className="flex items-center gap-1 text-xs text-muted">
                 <Star className="h-3 w-3 fill-gold text-gold" /> {product.rating}
